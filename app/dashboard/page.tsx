@@ -17,15 +17,15 @@ export default function DashboardPage() {
 
   // User state management
   const [user, setUser] = useState({
-    firstName: "User",
-    lastName: "",
-    email: "user@example.com",
-    role: "RESEARCHER",
+    firstName: "Dr. Sarah",
+    lastName: "Chen",
+    email: "sarah.chen@stanford.edu",
+    role: "Research Scientist",
     avatar: "",
     lastLogin: new Date().toISOString(),
     analysisCount: 247,
     unreadNotifications: 3,
-    institution: "",
+    institution: "Stanford University",
     joinDate: new Date().toISOString()
   })
 
@@ -115,6 +115,17 @@ export default function DashboardPage() {
     }
   }
 
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (user.firstName && user.lastName) {
+      return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+    } else if (user.firstName) {
+      return user.firstName.charAt(0) + (user.firstName.charAt(1) || '')
+    } else {
+      return "U"
+    }
+  }
+
   // Get greeting name
   const getGreetingName = () => {
     if (user.firstName) {
@@ -181,7 +192,7 @@ export default function DashboardPage() {
             {/* User Info Display */}
             <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 rounded-lg">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                {user.firstName.charAt(0)}{user.lastName.charAt(0) || user.firstName.charAt(1)}
+                {getUserInitials()}
               </div>
               <div className="text-sm">
                 <div className="font-medium text-gray-900">{getDisplayName()}</div>

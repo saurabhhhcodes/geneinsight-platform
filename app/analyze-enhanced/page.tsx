@@ -111,6 +111,29 @@ ${sequence}`
           <title>3D Protein Structure - ${results.structure3D.structureId}</title>
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script src="https://3dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+          <script>
+            // Ensure 3DMol is properly loaded before use
+            function wait3DMol() {
+              return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 50;
+
+                function check() {
+                  attempts++;
+                  if (typeof window.$3Dmol !== 'undefined' && window.$3Dmol.createViewer) {
+                    console.log('3DMol.js is ready');
+                    resolve();
+                  } else if (attempts < maxAttempts) {
+                    setTimeout(check, 100);
+                  } else {
+                    reject(new Error('3DMol.js failed to load after ' + maxAttempts + ' attempts'));
+                  }
+                }
+                check();
+              });
+            }
+          </script>
+
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
             .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -121,6 +144,7 @@ ${sequence}`
             .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: #000; position: relative; }
             .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 16px; z-index: 10; }
             .error-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff6b6b; font-size: 14px; text-align: center; z-index: 10; }
+            .structure-overlay { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; z-index: 5; }
             .viewer-controls { margin-top: 10px; text-align: center; }
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
             .info-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
@@ -155,7 +179,7 @@ ${sequence}`
                     Failed to load 3D viewer.<br>
                     <button class="btn" onclick="retryViewer()">Retry</button>
                   </div>
-                  <div class="structure-info">
+                  <div class="structure-overlay">
                     <strong>${results.structure3D.structureId}</strong><br>
                     ${results.structure3D.length} amino acids<br>
                     Confidence: ${(results.structure3D.confidence * 100).toFixed(1)}%
@@ -241,12 +265,12 @@ ${sequence}`
               try {
                 console.log('Initializing 3DMol viewer...');
 
-                // Check if 3DMol is loaded and has required functions
-                if (typeof $3Dmol === 'undefined') {
+                // Verify 3DMol is properly loaded
+                if (typeof window.$3Dmol === 'undefined') {
                   throw new Error('3DMol library not loaded');
                 }
 
-                if (typeof $3Dmol.createViewer !== 'function') {
+                if (typeof window.$3Dmol.createViewer !== 'function') {
                   throw new Error('3DMol createViewer function not available');
                 }
 
@@ -259,59 +283,79 @@ ${sequence}`
                 const loadingMsg = document.getElementById('loadingMessage');
                 if (loadingMsg) loadingMsg.style.display = 'none';
 
-                // Create viewer with minimal configuration to avoid errors
+                console.log('Creating 3DMol viewer instance...');
+
+                // Create viewer with safe configuration
                 const config = {
-                  backgroundColor: 'black'
+                  backgroundColor: 'black',
+                  antialias: false // Disable to avoid WebGL issues
                 };
 
-                console.log('Creating 3DMol viewer...');
-                viewer = $3Dmol.createViewer(element, config);
+                viewer = window.$3Dmol.createViewer(element, config);
 
                 if (!viewer) {
                   throw new Error('Failed to create 3DMol viewer instance');
                 }
 
-                // Load the generated PDB data
-                const pdbData = document.getElementById('pdbData').textContent;
+                console.log('3DMol viewer created successfully');
 
+                // Get PDB data
+                const pdbData = document.getElementById('pdbData').textContent;
                 if (!pdbData || pdbData.trim() === '') {
                   throw new Error('No PDB data available');
                 }
 
-                console.log('Loading PDB data...');
+                console.log('Adding PDB model...');
 
                 // Add model with error handling
                 try {
-                  viewer.addModel(pdbData, 'pdb');
+                  const model = viewer.addModel(pdbData, 'pdb');
+                  if (!model) {
+                    throw new Error('Failed to parse PDB data');
+                  }
+                  console.log('PDB model added successfully');
                 } catch (modelError) {
-                  console.error('Error adding model:', modelError);
-                  throw new Error('Failed to load PDB data into viewer');
+                  console.error('Model error:', modelError);
+                  throw new Error('Failed to add PDB model: ' + modelError.message);
                 }
 
-                // Set style with error handling
+                console.log('Setting visualization style...');
+
+                // Set style with fallback options
                 try {
-                  viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+                  viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
                 } catch (styleError) {
-                  console.error('Error setting style:', styleError);
-                  // Try simpler style
-                  viewer.setStyle({}, {cartoon: {}});
+                  console.warn('Spectrum coloring failed, using default:', styleError);
+                  try {
+                    viewer.setStyle({}, {cartoon: {color: 'white'}});
+                  } catch (fallbackError) {
+                    console.warn('Cartoon style failed, using stick:', fallbackError);
+                    viewer.setStyle({}, {stick: {radius: 0.3}});
+                  }
                 }
 
-                // Zoom and render with error handling
-                try {
-                  viewer.zoomTo();
-                  viewer.render();
-                } catch (renderError) {
-                  console.error('Error rendering:', renderError);
-                  throw new Error('Failed to render 3D structure');
-                }
+                console.log('Rendering viewer...');
+
+                // Zoom and render
+                viewer.zoomTo();
+                viewer.render();
 
                 viewerInitialized = true;
-                console.log('3DMol viewer initialized successfully');
+                console.log('3DMol viewer fully initialized and rendered!');
+
+                // Verify viewer is working
+                setTimeout(() => {
+                  try {
+                    viewer.render(); // Test render
+                    console.log('Viewer verification successful');
+                  } catch (verifyError) {
+                    console.warn('Viewer verification failed:', verifyError);
+                  }
+                }, 500);
 
               } catch (error) {
                 console.error('Viewer initialization error:', error);
-                showError('Failed to initialize 3D viewer: ' + error.message + '. Try refreshing the page.');
+                showError('Failed to initialize 3D viewer: ' + error.message + '<br><small>Try refreshing the page</small>');
               }
             }
 
@@ -345,7 +389,7 @@ ${sequence}`
             // Reset camera view
             function resetView() {
               if (!viewerInitialized || !viewer) {
-                alert('3D viewer not initialized. Please retry initialization.');
+                alert('3D viewer not initialized.');
                 return;
               }
               try {
@@ -356,41 +400,62 @@ ${sequence}`
               }
             }
 
-            // Toggle visualization style
+            // Toggle visualization style with error handling
             function toggleStyle(style) {
               if (!viewerInitialized || !viewer) {
-                alert('3D viewer not initialized. Please retry initialization.');
+                alert('3D viewer not initialized.');
                 return;
               }
 
               try {
-                viewer.removeAllModels();
-                const pdbData = document.getElementById('pdbData').textContent;
-                viewer.addModel(pdbData, 'pdb');
+                console.log('Changing style to:', style);
 
+                // Clear existing styles and re-add model if needed
+                const models = viewer.getModel();
+                if (!models || models.length === 0) {
+                  console.log('No models found, re-adding PDB data');
+                  const pdbData = document.getElementById('pdbData').textContent;
+                  viewer.addModel(pdbData, 'pdb');
+                }
+
+                // Apply style with fallbacks
                 switch(style) {
                   case 'cartoon':
-                    viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
+                    try {
+                      viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
+                    } catch (e) {
+                      viewer.setStyle({}, {cartoon: {color: 'white'}});
+                    }
                     break;
                   case 'sphere':
-                    viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 1.0}});
+                    try {
+                      viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 1.0}});
+                    } catch (e) {
+                      viewer.setStyle({}, {sphere: {color: 'white', radius: 1.0}});
+                    }
                     break;
                   case 'stick':
-                    viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.3}});
+                    try {
+                      viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.3}});
+                    } catch (e) {
+                      viewer.setStyle({}, {stick: {color: 'white', radius: 0.3}});
+                    }
                     break;
                 }
-                viewer.zoomTo();
+
                 viewer.render();
+                console.log('Style changed successfully');
+
               } catch (error) {
                 console.error('Style toggle error:', error);
-                showError('Failed to change visualization style');
+                alert('Failed to change visualization style: ' + error.message);
               }
             }
 
             // Toggle spinning animation
             function toggleSpin() {
               if (!viewerInitialized || !viewer) {
-                alert('3D viewer not initialized. Please retry initialization.');
+                alert('3D viewer not initialized.');
                 return;
               }
 
@@ -404,6 +469,200 @@ ${sequence}`
                 }
               } catch (error) {
                 console.error('Spin toggle error:', error);
+              }
+            }
+
+            // Load PDB file with comprehensive error handling
+            function loadPDBFile(event) {
+              const file = event.target.files[0];
+              if (!file) return;
+
+              console.log('Loading PDB file:', file.name);
+
+              // Accept both .pdb and .txt files
+              const fileName = file.name.toLowerCase();
+              if (!fileName.endsWith('.pdb') && !fileName.endsWith('.txt')) {
+                alert('Please select a valid PDB file (.pdb or .txt extension)');
+                return;
+              }
+
+              // Check file size (limit to 10MB)
+              if (file.size > 10 * 1024 * 1024) {
+                alert('File too large. Please select a file smaller than 10MB.');
+                return;
+              }
+
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                try {
+                  const pdbContent = e.target.result;
+
+                  // Validate PDB content
+                  if (!pdbContent || typeof pdbContent !== 'string') {
+                    throw new Error('Invalid file content');
+                  }
+
+                  // Basic PDB format validation
+                  if (!pdbContent.includes('ATOM') && !pdbContent.includes('HETATM')) {
+                    throw new Error('File does not appear to be a valid PDB format');
+                  }
+
+                  console.log('PDB file validated, updating viewer...');
+
+                  // Update PDB data display
+                  document.getElementById('pdbData').textContent = pdbContent;
+
+                  // Load new structure in 3DMol viewer with comprehensive error handling
+                  if (viewerInitialized && viewer) {
+                    try {
+                      console.log('Removing existing models...');
+                      viewer.removeAllModels();
+
+                      console.log('Adding new PDB model...');
+                      const model = viewer.addModel(pdbContent, 'pdb');
+
+                      if (!model) {
+                        throw new Error('Failed to parse PDB file');
+                      }
+
+                      console.log('Setting style...');
+                      // Try spectrum coloring first, fallback to white
+                      try {
+                        viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
+                      } catch (styleError) {
+                        console.warn('Spectrum coloring failed, using white:', styleError);
+                        viewer.setStyle({}, {cartoon: {color: 'white'}});
+                      }
+
+                      console.log('Rendering...');
+                      viewer.zoomTo();
+                      viewer.render();
+
+                      alert('PDB file loaded and visualized successfully!');
+                      console.log('PDB file loading completed successfully');
+
+                    } catch (viewerError) {
+                      console.error('Viewer update error:', viewerError);
+                      alert('PDB file loaded but failed to update 3D viewer: ' + viewerError.message);
+                    }
+                  } else {
+                    alert('PDB file loaded successfully! 3D viewer not initialized - please refresh and try again.');
+                  }
+
+                } catch (error) {
+                  console.error('PDB loading error:', error);
+                  alert('Error loading PDB file: ' + error.message);
+                }
+              };
+
+              reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+              };
+
+              reader.readAsText(file);
+            }
+
+            // Render the molecule
+            function render() {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+              // Create gradient background
+              const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+              gradient.addColorStop(0, '#1e3c72');
+              gradient.addColorStop(1, '#2a5298');
+              ctx.fillStyle = gradient;
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+              // Project all atoms
+              const projectedAtoms = atoms.map(atom => ({
+                ...atom,
+                ...project3D(atom.x, atom.y, atom.z)
+              }));
+
+              // Sort by depth for proper rendering
+              projectedAtoms.sort((a, b) => b.depth - a.depth);
+
+              // Draw bonds first
+              if (currentStyle === 'stick' || currentStyle === 'cartoon') {
+                ctx.strokeStyle = '#cccccc';
+                ctx.lineWidth = currentStyle === 'stick' ? 3 : 1;
+
+                bonds.forEach(bond => {
+                  const atomA = projectedAtoms[bond.from];
+                  const atomB = projectedAtoms[bond.to];
+
+                  if (atomA && atomB) {
+                    ctx.beginPath();
+                    ctx.moveTo(atomA.x, atomA.y);
+                    ctx.lineTo(atomB.x, atomB.y);
+                    ctx.stroke();
+                  }
+                });
+              }
+
+              // Draw atoms
+              projectedAtoms.forEach(atom => {
+                let radius;
+                switch(currentStyle) {
+                  case 'sphere': radius = 8; break;
+                  case 'stick': radius = 4; break;
+                  default: radius = 6; break;
+                }
+
+                // Add depth-based size variation
+                const depthFactor = Math.max(0.5, 1 - atom.depth / 1000);
+                radius *= depthFactor;
+
+                ctx.beginPath();
+                ctx.arc(atom.x, atom.y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = atom.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Add glow effect
+                ctx.shadowColor = atom.color;
+                ctx.shadowBlur = 5;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+              });
+
+              // Continue animation if enabled
+              if (isAnimating) {
+                rotationY += 0.02;
+                animationId = requestAnimationFrame(render);
+              }
+            }
+
+            // Control functions
+            function resetView() {
+              rotationX = 0;
+              rotationY = 0;
+              render();
+            }
+
+            function showCartoon() {
+              currentStyle = 'cartoon';
+              render();
+            }
+
+            function showSpheres() {
+              currentStyle = 'sphere';
+              render();
+            }
+
+            function showSticks() {
+              currentStyle = 'stick';
+              render();
+            }
+
+            function toggleAnimation() {
+              isAnimating = !isAnimating;
+              if (isAnimating) {
+                render();
+              } else {
+                cancelAnimationFrame(animationId);
               }
             }
 
@@ -542,47 +801,25 @@ ${sequence}`
               });
             }
 
-            // Initialize viewer when page loads with fallback loading
-            window.onload = function() {
-              console.log('Page loaded, checking for libraries...');
+            // Initialize viewer when page loads
+            window.onload = async function() {
+              console.log('Page loaded, waiting for 3DMol.js...');
 
-              // Try multiple CDN sources for 3DMol.js
-              function loadFallback3DMol() {
-                const script = document.createElement('script');
-                script.src = 'https://3dmol.org/build/3Dmol-min.js';
-                script.onload = function() {
-                  console.log('Fallback 3DMol loaded');
-                  setTimeout(initViewer, 1000);
-                };
-                script.onerror = function() {
-                  console.error('All 3DMol sources failed');
-                  showError('Failed to load 3DMol.js library. Please check your internet connection and refresh.');
-                };
-                document.head.appendChild(script);
+              try {
+                // Wait for 3DMol.js to be ready
+                await wait3DMol();
+
+                console.log('3DMol.js is ready, initializing viewer...');
+
+                // Small delay to ensure DOM is fully ready
+                setTimeout(() => {
+                  initViewer();
+                }, 500);
+
+              } catch (error) {
+                console.error('Failed to load 3DMol.js:', error);
+                showError('Failed to load 3DMol.js library. Please refresh the page and check your internet connection.');
               }
-
-              // Check if libraries are loaded with multiple attempts
-              let attempts = 0;
-              const maxAttempts = 15;
-
-              function checkLibraries() {
-                attempts++;
-                console.log('Checking libraries, attempt:', attempts);
-
-                if (typeof $ !== 'undefined' && typeof $3Dmol !== 'undefined') {
-                  console.log('Libraries loaded successfully, initializing viewer...');
-                  setTimeout(initViewer, 500);
-                } else if (attempts < maxAttempts) {
-                  console.log('Libraries not ready, retrying in 500ms...');
-                  setTimeout(checkLibraries, 500);
-                } else {
-                  console.log('Primary CDN failed, trying fallback...');
-                  loadFallback3DMol();
-                }
-              }
-
-              // Start checking immediately
-              checkLibraries();
             };
           </script>
         </body>
