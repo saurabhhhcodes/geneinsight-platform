@@ -56,16 +56,37 @@ function generateProteinStructure(dnaSequence: string) {
     secondaryStructure.push(structures[Math.floor(Math.random() * 3)]);
   }
 
+  // Calculate secondary structure percentages
+  const helixCount = secondaryStructure.filter(s => s === 'H').length;
+  const sheetCount = secondaryStructure.filter(s => s === 'E').length;
+  const loopCount = secondaryStructure.filter(s => s === 'C').length;
+  const total = secondaryStructure.length;
+
+  const confidence = Math.random() * 0.3 + 0.7;
+
   return {
-    id: `structure_${Date.now()}`,
-    proteinSequence,
-    length: proteinSequence.length,
-    atoms,
-    secondaryStructure: secondaryStructure.join(''),
-    confidence: Math.random() * 0.3 + 0.7,
-    method: 'AI Prediction',
-    timestamp: new Date().toISOString(),
-    pdbData: generateMockPDB(atoms, proteinSequence)
+    structure3D: {
+      success: true,
+      structureId: `structure_${Date.now()}`,
+      proteinSequence,
+      length: proteinSequence.length,
+      atoms,
+      secondaryStructure: secondaryStructure.join(''),
+      confidence: Math.round(confidence * 100) / 100,
+      method: 'AI Prediction',
+      timestamp: new Date().toISOString(),
+      pdbData: generateMockPDB(atoms, proteinSequence),
+      secondaryStructure: {
+        alphaHelix: total > 0 ? (helixCount / total) * 100 : 0,
+        betaSheet: total > 0 ? (sheetCount / total) * 100 : 0,
+        loop: total > 0 ? (loopCount / total) * 100 : 0
+      },
+      molecularProperties: {
+        molecularWeight: proteinSequence.length * 110, // Approximate
+        isoelectricPoint: 6.5 + Math.random() * 2, // Mock pI
+        hydrophobicity: Math.random() * 2 - 1 // Mock hydrophobicity
+      }
+    }
   };
 }
 

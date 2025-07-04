@@ -204,7 +204,7 @@ Note: 3D Visualizer integration coming soon!`)
         const data = await response.json()
         setResults(prev => ({
           ...prev,
-          structure3D: data
+          structure3D: data.data?.structure3D || data.structure3D
         }))
       } else {
         const errorData = await response.json()

@@ -31,21 +31,31 @@ function analyzeDNASequence(sequence: string) {
   const riskLevels = ['Low', 'Moderate', 'High'];
   const riskLevel = riskLevels[Math.floor(Math.random() * 3)];
   
+  // Calculate additional metrics
+  const atContent = 100 - gcContent;
+  const orfCount = Math.floor(length / 300) + Math.floor(Math.random() * 3); // Mock ORF count
+  const motifs = ['TATA', 'CAAT', 'GC-box'].filter(() => Math.random() > 0.5); // Mock motifs
+
   return {
-    id: `analysis_${Date.now()}`,
-    sequence: cleanSequence.substring(0, 100) + '...', // Truncate for display
-    length,
-    gcContent: Math.round(gcContent * 100) / 100,
-    confidence: Math.round(confidence * 100) / 100,
-    detectedGenes,
-    riskLevel,
-    predictions: {
-      diseaseRisk: Math.round(Math.random() * 30 + 10), // 10-40%
-      functionalImpact: confidence > 0.8 ? 'High' : confidence > 0.6 ? 'Moderate' : 'Low',
-      pathogenicity: Math.random() > 0.7 ? 'Pathogenic' : 'Benign'
-    },
-    timestamp: new Date().toISOString(),
-    status: 'completed'
+    basicAnalysis: {
+      id: `analysis_${Date.now()}`,
+      sequence: cleanSequence.substring(0, 100) + '...', // Truncate for display
+      length,
+      gcContent: Math.round(gcContent * 100) / 100,
+      atContent: Math.round(atContent * 100) / 100,
+      orfCount,
+      motifs,
+      confidence: Math.round(confidence * 100) / 100,
+      detectedGenes,
+      riskLevel,
+      predictions: {
+        diseaseRisk: Math.round(Math.random() * 30 + 10), // 10-40%
+        functionalImpact: confidence > 0.8 ? 'High' : confidence > 0.6 ? 'Moderate' : 'Low',
+        pathogenicity: Math.random() > 0.7 ? 'Pathogenic' : 'Benign'
+      },
+      timestamp: new Date().toISOString(),
+      status: 'completed'
+    }
   };
 }
 
