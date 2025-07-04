@@ -102,87 +102,222 @@ ${sequence}`
     }
 
     // Create a new window with 3D structure data
-    const structureWindow = window.open('', '_blank', 'width=800,height=600')
+    const structureWindow = window.open('', '_blank', 'width=1000,height=700')
     if (structureWindow) {
       structureWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
           <title>3D Protein Structure - ${results.structure3D.structureId}</title>
+          <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-            .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
             .header { text-align: center; margin-bottom: 20px; }
-            .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+            .main-content { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
+            .viewer-section { background: #f8f9fa; border-radius: 8px; padding: 20px; }
+            .info-section { }
+            .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: black; position: relative; }
+            .viewer-controls { margin-top: 10px; text-align: center; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
             .info-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
-            .info-card h3 { margin: 0 0 5px 0; color: #007bff; }
+            .info-card h3 { margin: 0 0 5px 0; color: #007bff; font-size: 14px; }
+            .info-card p { margin: 0; font-size: 18px; font-weight: bold; }
             .sequence-box { background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; }
-            .sequence { font-family: monospace; word-break: break-all; line-height: 1.4; }
+            .sequence { font-family: monospace; word-break: break-all; line-height: 1.4; font-size: 12px; max-height: 150px; overflow-y: auto; }
             .pdb-section { margin-top: 20px; }
-            .pdb-data { background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
-            .download-btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 5px; }
-            .download-btn:hover { background: #0056b3; }
+            .pdb-data { background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 11px; max-height: 200px; overflow-y: auto; }
+            .btn { background: #007bff; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; font-size: 12px; }
+            .btn:hover { background: #0056b3; }
+            .btn-secondary { background: #6c757d; }
+            .btn-secondary:hover { background: #545b62; }
+            .upload-section { margin: 15px 0; padding: 15px; background: #e9ecef; border-radius: 6px; }
+            .file-input { margin: 10px 0; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>🧬 3D Protein Structure Analysis</h1>
+              <h1>🧬 3D Protein Structure Viewer</h1>
               <p>Structure ID: <strong>${results.structure3D.structureId}</strong></p>
             </div>
 
-            <div class="info-grid">
-              <div class="info-card">
-                <h3>Confidence Score</h3>
-                <p>${(results.structure3D.confidence * 100).toFixed(1)}%</p>
-              </div>
-              <div class="info-card">
-                <h3>Method</h3>
-                <p>${results.structure3D.method}</p>
-              </div>
-              <div class="info-card">
-                <h3>Protein Length</h3>
-                <p>${results.structure3D.length} amino acids</p>
-              </div>
-              <div class="info-card">
-                <h3>Molecular Weight</h3>
-                <p>${results.structure3D.molecularProperties?.molecularWeight?.toFixed(0) || 'N/A'} Da</p>
-              </div>
-            </div>
+            <div class="main-content">
+              <div class="viewer-section">
+                <h3>🎯 Interactive 3D Viewer</h3>
+                <div id="viewer" class="viewer-container"></div>
+                <div class="viewer-controls">
+                  <button class="btn" onclick="resetView()">Reset View</button>
+                  <button class="btn" onclick="toggleStyle('cartoon')">Cartoon</button>
+                  <button class="btn" onclick="toggleStyle('sphere')">Sphere</button>
+                  <button class="btn" onclick="toggleStyle('stick')">Stick</button>
+                  <button class="btn btn-secondary" onclick="toggleSpin()">Toggle Spin</button>
+                </div>
 
-            <div class="sequence-box">
-              <h3>🔤 Protein Sequence</h3>
-              <div class="sequence">${results.structure3D.proteinSequence}</div>
-            </div>
+                <div class="upload-section">
+                  <h4>📁 Import PDB File</h4>
+                  <input type="file" id="pdbFileInput" class="file-input" accept=".pdb" onchange="loadPDBFile(event)">
+                  <button class="btn" onclick="document.getElementById('pdbFileInput').click()">Choose PDB File</button>
+                  <p style="font-size: 12px; color: #666; margin: 5px 0;">Upload your own PDB file to visualize</p>
+                </div>
+              </div>
 
-            <div class="info-grid">
-              <div class="info-card">
-                <h3>Alpha Helix</h3>
-                <p>${results.structure3D.secondaryStructure?.alphaHelix?.toFixed(1) || 'N/A'}%</p>
-              </div>
-              <div class="info-card">
-                <h3>Beta Sheet</h3>
-                <p>${results.structure3D.secondaryStructure?.betaSheet?.toFixed(1) || 'N/A'}%</p>
-              </div>
-              <div class="info-card">
-                <h3>Loop Regions</h3>
-                <p>${results.structure3D.secondaryStructure?.loop?.toFixed(1) || 'N/A'}%</p>
-              </div>
-              <div class="info-card">
-                <h3>Isoelectric Point</h3>
-                <p>${results.structure3D.molecularProperties?.isoelectricPoint?.toFixed(2) || 'N/A'}</p>
-              </div>
-            </div>
+              <div class="info-section">
+                <div class="info-grid">
+                  <div class="info-card">
+                    <h3>Confidence</h3>
+                    <p>${(results.structure3D.confidence * 100).toFixed(1)}%</p>
+                  </div>
+                  <div class="info-card">
+                    <h3>Method</h3>
+                    <p>${results.structure3D.method}</p>
+                  </div>
+                  <div class="info-card">
+                    <h3>Length</h3>
+                    <p>${results.structure3D.length} AA</p>
+                  </div>
+                  <div class="info-card">
+                    <h3>Mol. Weight</h3>
+                    <p>${results.structure3D.molecularProperties?.molecularWeight?.toFixed(0) || 'N/A'} Da</p>
+                  </div>
+                </div>
 
-            <div class="pdb-section">
-              <h3>📄 PDB Structure Data</h3>
-              <button class="download-btn" onclick="downloadPDB()">Download PDB File</button>
-              <button class="download-btn" onclick="copyPDB()">Copy to Clipboard</button>
-              <div class="pdb-data" id="pdbData">${results.structure3D.pdbData}</div>
+                <div class="sequence-box">
+                  <h3>🔤 Protein Sequence</h3>
+                  <div class="sequence">${results.structure3D.proteinSequence}</div>
+                </div>
+
+                <div class="info-grid">
+                  <div class="info-card">
+                    <h3>α-Helix</h3>
+                    <p>${results.structure3D.secondaryStructure?.alphaHelix?.toFixed(1) || 'N/A'}%</p>
+                  </div>
+                  <div class="info-card">
+                    <h3>β-Sheet</h3>
+                    <p>${results.structure3D.secondaryStructure?.betaSheet?.toFixed(1) || 'N/A'}%</p>
+                  </div>
+                  <div class="info-card">
+                    <h3>Loops</h3>
+                    <p>${results.structure3D.secondaryStructure?.loop?.toFixed(1) || 'N/A'}%</p>
+                  </div>
+                  <div class="info-card">
+                    <h3>pI</h3>
+                    <p>${results.structure3D.molecularProperties?.isoelectricPoint?.toFixed(2) || 'N/A'}</p>
+                  </div>
+                </div>
+
+                <div class="pdb-section">
+                  <h3>📄 PDB Data</h3>
+                  <button class="btn" onclick="downloadPDB()">Download PDB</button>
+                  <button class="btn" onclick="copyPDB()">Copy PDB</button>
+                  <div class="pdb-data" id="pdbData">${results.structure3D.pdbData}</div>
+                </div>
+              </div>
             </div>
           </div>
 
           <script>
+            let viewer;
+            let isSpinning = false;
+
+            // Initialize 3DMol viewer
+            function initViewer() {
+              const element = document.getElementById('viewer');
+              const config = { backgroundColor: 'black' };
+              viewer = $3Dmol.createViewer(element, config);
+
+              // Load the generated PDB data
+              const pdbData = document.getElementById('pdbData').textContent;
+              viewer.addModel(pdbData, 'pdb');
+              viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+              viewer.zoomTo();
+              viewer.render();
+            }
+
+            // Reset camera view
+            function resetView() {
+              if (viewer) {
+                viewer.zoomTo();
+                viewer.render();
+              }
+            }
+
+            // Toggle visualization style
+            function toggleStyle(style) {
+              if (!viewer) return;
+
+              viewer.removeAllModels();
+              const pdbData = document.getElementById('pdbData').textContent;
+              viewer.addModel(pdbData, 'pdb');
+
+              switch(style) {
+                case 'cartoon':
+                  viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+                  break;
+                case 'sphere':
+                  viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 0.5}});
+                  break;
+                case 'stick':
+                  viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.2}});
+                  break;
+              }
+              viewer.zoomTo();
+              viewer.render();
+            }
+
+            // Toggle spinning animation
+            function toggleSpin() {
+              if (!viewer) return;
+
+              if (isSpinning) {
+                viewer.spin(false);
+                isSpinning = false;
+              } else {
+                viewer.spin('y', 1);
+                isSpinning = true;
+              }
+            }
+
+            // Load external PDB file
+            function loadPDBFile(event) {
+              const file = event.target.files[0];
+              if (!file) return;
+
+              if (!file.name.toLowerCase().endsWith('.pdb')) {
+                alert('Please select a valid PDB file (.pdb extension)');
+                return;
+              }
+
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                try {
+                  const pdbContent = e.target.result;
+
+                  // Clear current model
+                  viewer.removeAllModels();
+
+                  // Add new model
+                  viewer.addModel(pdbContent, 'pdb');
+                  viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+                  viewer.zoomTo();
+                  viewer.render();
+
+                  // Update PDB data display
+                  document.getElementById('pdbData').textContent = pdbContent;
+
+                  alert('PDB file loaded successfully!');
+                } catch (error) {
+                  alert('Error loading PDB file: ' + error.message);
+                }
+              };
+
+              reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+              };
+
+              reader.readAsText(file);
+            }
+
             function downloadPDB() {
               const pdbData = document.getElementById('pdbData').textContent;
               const blob = new Blob([pdbData], { type: 'text/plain' });
@@ -200,8 +335,23 @@ ${sequence}`
               const pdbData = document.getElementById('pdbData').textContent;
               navigator.clipboard.writeText(pdbData).then(() => {
                 alert('PDB data copied to clipboard!');
+              }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = pdbData;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('PDB data copied to clipboard!');
               });
             }
+
+            // Initialize viewer when page loads
+            window.onload = function() {
+              // Wait for 3DMol to load
+              setTimeout(initViewer, 500);
+            };
           </script>
         </body>
         </html>
