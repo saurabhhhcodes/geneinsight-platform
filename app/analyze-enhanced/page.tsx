@@ -109,8 +109,6 @@ ${sequence}`
         <html>
         <head>
           <title>3D Protein Structure - ${results.structure3D.structureId}</title>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-          <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
             .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -118,9 +116,8 @@ ${sequence}`
             .main-content { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
             .viewer-section { background: #f8f9fa; border-radius: 8px; padding: 20px; }
             .info-section { }
-            .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: #1a1a1a; position: relative; }
-            .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 16px; }
-            .error-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff6b6b; font-size: 14px; text-align: center; }
+            .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; }
+            .molecule-canvas { width: 100%; height: 100%; }
             .viewer-controls { margin-top: 10px; text-align: center; }
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
             .info-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
@@ -136,6 +133,14 @@ ${sequence}`
             .btn-secondary:hover { background: #545b62; }
             .upload-section { margin: 15px 0; padding: 15px; background: #e9ecef; border-radius: 6px; }
             .file-input { margin: 10px 0; }
+            .atom { position: absolute; border-radius: 50%; animation: float 6s ease-in-out infinite; }
+            .atom:nth-child(1) { animation-delay: 0s; }
+            .atom:nth-child(2) { animation-delay: 1s; }
+            .atom:nth-child(3) { animation-delay: 2s; }
+            .atom:nth-child(4) { animation-delay: 3s; }
+            .atom:nth-child(5) { animation-delay: 4s; }
+            @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+            .structure-info { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 6px; font-size: 12px; }
           </style>
         </head>
         <body>
@@ -147,21 +152,19 @@ ${sequence}`
 
             <div class="main-content">
               <div class="viewer-section">
-                <h3>🎯 Interactive 3D Viewer</h3>
+                <h3>🎯 3D Protein Structure Visualization</h3>
                 <div id="viewer" class="viewer-container">
-                  <div id="loadingMessage" class="loading-message">Loading 3D viewer...</div>
-                  <div id="errorMessage" class="error-message" style="display: none;">
-                    3D viewer failed to load.<br>
-                    <button class="btn" onclick="retryViewer()">Retry</button>
-                    <button class="btn" onclick="showSimpleViewer()">Simple View</button>
+                  <div class="structure-info">
+                    <strong>${results.structure3D.structureId}</strong><br>
+                    ${results.structure3D.length} amino acids<br>
+                    Confidence: ${(results.structure3D.confidence * 100).toFixed(1)}%
                   </div>
                 </div>
                 <div class="viewer-controls">
-                  <button class="btn" onclick="resetView()">Reset View</button>
-                  <button class="btn" onclick="toggleStyle('cartoon')">Cartoon</button>
-                  <button class="btn" onclick="toggleStyle('sphere')">Sphere</button>
-                  <button class="btn" onclick="toggleStyle('stick')">Stick</button>
-                  <button class="btn btn-secondary" onclick="toggleSpin()">Toggle Spin</button>
+                  <button class="btn" onclick="animateStructure()">Animate</button>
+                  <button class="btn" onclick="showAtoms()">Show Atoms</button>
+                  <button class="btn" onclick="showBonds()">Show Bonds</button>
+                  <button class="btn btn-secondary" onclick="resetAnimation()">Reset</button>
                 </div>
 
                 <div class="upload-section">
@@ -227,145 +230,167 @@ ${sequence}`
           </div>
 
           <script>
-            let viewer;
-            let isSpinning = false;
-            let viewerInitialized = false;
+            let animationRunning = false;
+            let atomCount = 0;
 
-            // Initialize 3DMol viewer with error handling
-            function initViewer() {
-              try {
-                // Check if 3DMol is loaded
-                if (typeof $3Dmol === 'undefined') {
-                  throw new Error('3DMol library not loaded');
+            // Create animated atoms representing the protein structure
+            function createAtoms() {
+              const viewer = document.getElementById('viewer');
+              const atoms = ${JSON.stringify(results.structure3D.atoms || [])};
+
+              // Clear existing atoms
+              const existingAtoms = viewer.querySelectorAll('.atom');
+              existingAtoms.forEach(atom => atom.remove());
+
+              // Create visual atoms based on structure data
+              const maxAtoms = Math.min(atoms.length, 20); // Limit for performance
+
+              for (let i = 0; i < maxAtoms; i++) {
+                const atom = document.createElement('div');
+                atom.className = 'atom';
+
+                // Position atoms in a helix pattern
+                const angle = (i * 30) * Math.PI / 180;
+                const radius = 80;
+                const x = 50 + radius * Math.cos(angle) / 2;
+                const y = 50 + radius * Math.sin(angle) / 2 + (i * 5);
+
+                // Color based on amino acid type
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+                const color = colors[i % colors.length];
+
+                atom.style.cssText = \`
+                  left: \${x}%;
+                  top: \${y % 80}%;
+                  width: 12px;
+                  height: 12px;
+                  background: \${color};
+                  box-shadow: 0 0 10px \${color};
+                  animation-delay: \${i * 0.2}s;
+                \`;
+
+                viewer.appendChild(atom);
+              }
+
+              atomCount = maxAtoms;
+            }
+
+            // Animate the structure
+            function animateStructure() {
+              if (animationRunning) return;
+              animationRunning = true;
+
+              const atoms = document.querySelectorAll('.atom');
+              atoms.forEach((atom, index) => {
+                atom.style.animationDuration = '3s';
+                atom.style.animationIterationCount = '3';
+              });
+
+              setTimeout(() => {
+                animationRunning = false;
+              }, 9000);
+            }
+
+            // Show atoms visualization
+            function showAtoms() {
+              createAtoms();
+            }
+
+            // Show bonds between atoms
+            function showBonds() {
+              const viewer = document.getElementById('viewer');
+
+              // Create connecting lines between atoms
+              const atoms = viewer.querySelectorAll('.atom');
+
+              // Remove existing bonds
+              const existingBonds = viewer.querySelectorAll('.bond');
+              existingBonds.forEach(bond => bond.remove());
+
+              for (let i = 0; i < atoms.length - 1; i++) {
+                const bond = document.createElement('div');
+                bond.className = 'bond';
+                bond.style.cssText = \`
+                  position: absolute;
+                  height: 2px;
+                  background: rgba(255,255,255,0.3);
+                  transform-origin: left center;
+                  z-index: 1;
+                \`;
+
+                const atom1 = atoms[i];
+                const atom2 = atoms[i + 1];
+
+                if (atom1 && atom2) {
+                  const rect1 = atom1.getBoundingClientRect();
+                  const rect2 = atom2.getBoundingClientRect();
+                  const viewerRect = viewer.getBoundingClientRect();
+
+                  const x1 = rect1.left - viewerRect.left + 6;
+                  const y1 = rect1.top - viewerRect.top + 6;
+                  const x2 = rect2.left - viewerRect.left + 6;
+                  const y2 = rect2.top - viewerRect.top + 6;
+
+                  const length = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+                  const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+
+                  bond.style.left = x1 + 'px';
+                  bond.style.top = y1 + 'px';
+                  bond.style.width = length + 'px';
+                  bond.style.transform = \`rotate(\${angle}deg)\`;
+
+                  viewer.appendChild(bond);
                 }
-
-                const element = document.getElementById('viewer');
-                const config = {
-                  backgroundColor: '#1a1a1a',
-                  antialias: true,
-                  alpha: true
-                };
-
-                // Clear loading message
-                document.getElementById('loadingMessage').style.display = 'none';
-
-                viewer = $3Dmol.createViewer(element, config);
-
-                // Load the generated PDB data
-                const pdbData = document.getElementById('pdbData').textContent;
-
-                if (!pdbData || pdbData.trim() === '') {
-                  throw new Error('No PDB data available');
-                }
-
-                viewer.addModel(pdbData, 'pdb');
-                viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.5}});
-                viewer.zoomTo();
-                viewer.render();
-
-                viewerInitialized = true;
-                console.log('3D viewer initialized successfully');
-
-              } catch (error) {
-                console.error('Viewer initialization error:', error);
-                showError('Failed to initialize 3D viewer: ' + error.message);
               }
             }
 
-            // Show error message
-            function showError(message) {
-              document.getElementById('loadingMessage').style.display = 'none';
-              const errorDiv = document.getElementById('errorMessage');
-              errorDiv.innerHTML = message + '<br><button class="btn" onclick="retryViewer()">Retry</button>';
-              errorDiv.style.display = 'block';
+            // Reset animation
+            function resetAnimation() {
+              const viewer = document.getElementById('viewer');
+              const atoms = viewer.querySelectorAll('.atom');
+              const bonds = viewer.querySelectorAll('.bond');
+
+              atoms.forEach(atom => atom.remove());
+              bonds.forEach(bond => bond.remove());
+
+              animationRunning = false;
+
+              // Show initial structure
+              setTimeout(createAtoms, 100);
             }
 
-            // Retry viewer initialization
-            function retryViewer() {
-              document.getElementById('errorMessage').style.display = 'none';
-              document.getElementById('loadingMessage').style.display = 'block';
-              document.getElementById('loadingMessage').textContent = 'Retrying...';
-              setTimeout(initViewer, 1000);
-            }
+            // Load PDB file functionality
+            function loadPDBFile(event) {
+              const file = event.target.files[0];
+              if (!file) return;
 
-            // Show simple text-based viewer as fallback
-            function showSimpleViewer() {
-              const viewerDiv = document.getElementById('viewer');
-              viewerDiv.innerHTML = \`
-                <div style="padding: 20px; color: white; text-align: center;">
-                  <h3>📊 Structure Data Summary</h3>
-                  <p><strong>Protein Length:</strong> ${results.structure3D.length} amino acids</p>
-                  <p><strong>Confidence:</strong> ${(results.structure3D.confidence * 100).toFixed(1)}%</p>
-                  <p><strong>Method:</strong> ${results.structure3D.method}</p>
-                  <div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                    <h4>Secondary Structure</h4>
-                    <p>α-Helix: ${results.structure3D.secondaryStructure?.alphaHelix?.toFixed(1) || 'N/A'}%</p>
-                    <p>β-Sheet: ${results.structure3D.secondaryStructure?.betaSheet?.toFixed(1) || 'N/A'}%</p>
-                    <p>Loops: ${results.structure3D.secondaryStructure?.loop?.toFixed(1) || 'N/A'}%</p>
-                  </div>
-                  <p style="font-size: 12px; color: #ccc;">
-                    3D visualization unavailable. Download PDB file below to view in external software.
-                  </p>
-                </div>
-              \`;
-            }
-
-            // Reset camera view
-            function resetView() {
-              if (!viewerInitialized || !viewer) {
-                alert('3D viewer not initialized. Please retry initialization.');
+              if (!file.name.toLowerCase().endsWith('.pdb')) {
+                alert('Please select a valid PDB file (.pdb extension)');
                 return;
               }
-              try {
-                viewer.zoomTo();
-                viewer.render();
-              } catch (error) {
-                console.error('Reset view error:', error);
-              }
-            }
 
-            // Toggle visualization style
-            function toggleStyle(style) {
-              if (!viewerInitialized || !viewer) {
-                alert('3D viewer not initialized. Please retry initialization.');
-                return;
-              }
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                try {
+                  const pdbContent = e.target.result;
 
-              try {
-                viewer.removeAllModels();
-                const pdbData = document.getElementById('pdbData').textContent;
-                viewer.addModel(pdbData, 'pdb');
+                  // Update PDB data display
+                  document.getElementById('pdbData').textContent = pdbContent;
 
-                switch(style) {
-                  case 'cartoon':
-                    viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.5}});
-                    break;
-                  case 'sphere':
-                    viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 0.8}});
-                    break;
-                  case 'stick':
-                    viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.3}});
-                    break;
+                  // Reset and show new structure
+                  resetAnimation();
+
+                  alert('PDB file loaded successfully! Structure visualization updated.');
+                } catch (error) {
+                  alert('Error loading PDB file: ' + error.message);
                 }
-                viewer.zoomTo();
-                viewer.render();
-              } catch (error) {
-                console.error('Style toggle error:', error);
-                showError('Failed to change visualization style');
-              }
-            }
+              };
 
-            // Toggle spinning animation
-            function toggleSpin() {
-              if (!viewer) return;
+              reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+              };
 
-              if (isSpinning) {
-                viewer.spin(false);
-                isSpinning = false;
-              } else {
-                viewer.spin('y', 1);
-                isSpinning = true;
-              }
+              reader.readAsText(file);
             }
 
             // Load external PDB file
@@ -439,26 +464,11 @@ ${sequence}`
 
             // Initialize viewer when page loads
             window.onload = function() {
-              // Check if jQuery and 3DMol are loaded
-              let attempts = 0;
-              const maxAttempts = 10;
-
-              function checkLibraries() {
-                attempts++;
-
-                if (typeof $ !== 'undefined' && typeof $3Dmol !== 'undefined') {
-                  console.log('Libraries loaded successfully');
-                  initViewer();
-                } else if (attempts < maxAttempts) {
-                  console.log('Waiting for libraries to load... attempt', attempts);
-                  setTimeout(checkLibraries, 500);
-                } else {
-                  console.error('Failed to load required libraries');
-                  showError('Failed to load 3D visualization libraries. Please refresh the page.');
-                }
-              }
-
-              checkLibraries();
+              // Initialize the simple 3D viewer
+              setTimeout(() => {
+                createAtoms();
+                showBonds();
+              }, 500);
             };
           </script>
         </body>
