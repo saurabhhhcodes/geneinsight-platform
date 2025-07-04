@@ -191,6 +191,7 @@ ${sequence}`
                   <button class="btn" onclick="toggleStyle('sphere')">Sphere</button>
                   <button class="btn" onclick="toggleStyle('stick')">Stick</button>
                   <button class="btn btn-secondary" onclick="toggleSpin()">Toggle Spin</button>
+                  <button class="btn" onclick="debugViewer()" style="background: #28a745;">Debug</button>
                 </div>
 
                 <div class="upload-section">
@@ -285,10 +286,11 @@ ${sequence}`
 
                 console.log('Creating 3DMol viewer instance...');
 
-                // Create viewer with safe configuration
+                // Create viewer with better visibility configuration
                 const config = {
-                  backgroundColor: 'black',
-                  antialias: false // Disable to avoid WebGL issues
+                  backgroundColor: '#1a1a1a', // Dark gray instead of pure black
+                  antialias: true,
+                  alpha: true
                 };
 
                 viewer = window.$3Dmol.createViewer(element, config);
@@ -321,37 +323,82 @@ ${sequence}`
 
                 console.log('Setting visualization style...');
 
-                // Set style with fallback options
+                // Set style with better visibility options
                 try {
-                  viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
+                  // Use larger, more visible styling
+                  viewer.setStyle({}, {
+                    cartoon: {
+                      color: 'spectrum',
+                      thickness: 1.2,
+                      opacity: 0.9
+                    }
+                  });
                 } catch (styleError) {
-                  console.warn('Spectrum coloring failed, using default:', styleError);
+                  console.warn('Spectrum coloring failed, using bright colors:', styleError);
                   try {
-                    viewer.setStyle({}, {cartoon: {color: 'white'}});
+                    viewer.setStyle({}, {
+                      cartoon: {
+                        color: 'cyan',
+                        thickness: 1.2,
+                        opacity: 0.9
+                      }
+                    });
                   } catch (fallbackError) {
-                    console.warn('Cartoon style failed, using stick:', fallbackError);
-                    viewer.setStyle({}, {stick: {radius: 0.3}});
+                    console.warn('Cartoon style failed, using bright sticks:', fallbackError);
+                    viewer.setStyle({}, {
+                      stick: {
+                        color: 'white',
+                        radius: 0.5
+                      }
+                    });
                   }
                 }
 
                 console.log('Rendering viewer...');
 
-                // Zoom and render
+                // Better zoom and lighting
                 viewer.zoomTo();
+
+                // Add lighting for better visibility
+                viewer.addLight({
+                  color: 'white',
+                  intensity: 0.8,
+                  position: [10, 10, 10]
+                });
+
+                // Render with better settings
                 viewer.render();
 
                 viewerInitialized = true;
                 console.log('3DMol viewer fully initialized and rendered!');
 
-                // Verify viewer is working
+                // Verify viewer is working and molecules are visible
                 setTimeout(() => {
                   try {
                     viewer.render(); // Test render
-                    console.log('Viewer verification successful');
+
+                    // Check if models are loaded
+                    const models = viewer.getModel();
+                    console.log('Number of models loaded:', models ? models.length : 0);
+
+                    if (models && models.length > 0) {
+                      const atomCount = models[0].selectedAtoms({}).length;
+                      console.log('Number of atoms in model:', atomCount);
+
+                      if (atomCount === 0) {
+                        console.warn('Model loaded but no atoms found - PDB parsing may have failed');
+                        showError('Molecular structure loaded but no atoms detected. The PDB data may be invalid.');
+                      } else {
+                        console.log('Viewer verification successful - molecules should be visible');
+                      }
+                    } else {
+                      console.warn('No models found in viewer');
+                      showError('No molecular models loaded. Please check the PDB data.');
+                    }
                   } catch (verifyError) {
                     console.warn('Viewer verification failed:', verifyError);
                   }
-                }, 500);
+                }, 1000);
 
               } catch (error) {
                 console.error('Viewer initialization error:', error);
@@ -418,27 +465,61 @@ ${sequence}`
                   viewer.addModel(pdbData, 'pdb');
                 }
 
-                // Apply style with fallbacks
+                // Apply style with better visibility
                 switch(style) {
                   case 'cartoon':
                     try {
-                      viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
+                      viewer.setStyle({}, {
+                        cartoon: {
+                          color: 'spectrum',
+                          thickness: 1.2,
+                          opacity: 0.9
+                        }
+                      });
                     } catch (e) {
-                      viewer.setStyle({}, {cartoon: {color: 'white'}});
+                      viewer.setStyle({}, {
+                        cartoon: {
+                          color: 'cyan',
+                          thickness: 1.2,
+                          opacity: 0.9
+                        }
+                      });
                     }
                     break;
                   case 'sphere':
                     try {
-                      viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 1.0}});
+                      viewer.setStyle({}, {
+                        sphere: {
+                          color: 'spectrum',
+                          radius: 1.2,
+                          opacity: 0.8
+                        }
+                      });
                     } catch (e) {
-                      viewer.setStyle({}, {sphere: {color: 'white', radius: 1.0}});
+                      viewer.setStyle({}, {
+                        sphere: {
+                          color: 'yellow',
+                          radius: 1.2,
+                          opacity: 0.8
+                        }
+                      });
                     }
                     break;
                   case 'stick':
                     try {
-                      viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.3}});
+                      viewer.setStyle({}, {
+                        stick: {
+                          color: 'spectrum',
+                          radius: 0.4
+                        }
+                      });
                     } catch (e) {
-                      viewer.setStyle({}, {stick: {color: 'white', radius: 0.3}});
+                      viewer.setStyle({}, {
+                        stick: {
+                          color: 'white',
+                          radius: 0.4
+                        }
+                      });
                     }
                     break;
                 }
@@ -469,6 +550,48 @@ ${sequence}`
                 }
               } catch (error) {
                 console.error('Spin toggle error:', error);
+              }
+            }
+
+            // Debug function to check viewer status
+            function debugViewer() {
+              if (!viewer) {
+                alert('Viewer not initialized');
+                return;
+              }
+
+              try {
+                const models = viewer.getModel();
+                const modelCount = models ? models.length : 0;
+                let atomCount = 0;
+
+                if (models && models.length > 0) {
+                  atomCount = models[0].selectedAtoms({}).length;
+                }
+
+                const debugInfo = \`
+Debug Information:
+- Viewer initialized: \${viewerInitialized}
+- Models loaded: \${modelCount}
+- Atoms in model: \${atomCount}
+- 3DMol available: \${typeof window.$3Dmol !== 'undefined'}
+- Viewer spinning: \${isSpinning}
+
+\${atomCount === 0 ? 'WARNING: No atoms detected - molecules may not be visible!' : 'Atoms detected - molecules should be visible'}
+                \`;
+
+                alert(debugInfo);
+                console.log('Debug info:', {
+                  viewerInitialized,
+                  modelCount,
+                  atomCount,
+                  viewer,
+                  models
+                });
+
+              } catch (error) {
+                alert('Debug error: ' + error.message);
+                console.error('Debug error:', error);
               }
             }
 
@@ -526,12 +649,24 @@ ${sequence}`
                       }
 
                       console.log('Setting style...');
-                      // Try spectrum coloring first, fallback to white
+                      // Try spectrum coloring with better visibility
                       try {
-                        viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
+                        viewer.setStyle({}, {
+                          cartoon: {
+                            color: 'spectrum',
+                            thickness: 1.2,
+                            opacity: 0.9
+                          }
+                        });
                       } catch (styleError) {
-                        console.warn('Spectrum coloring failed, using white:', styleError);
-                        viewer.setStyle({}, {cartoon: {color: 'white'}});
+                        console.warn('Spectrum coloring failed, using bright cyan:', styleError);
+                        viewer.setStyle({}, {
+                          cartoon: {
+                            color: 'cyan',
+                            thickness: 1.2,
+                            opacity: 0.9
+                          }
+                        });
                       }
 
                       console.log('Rendering...');
