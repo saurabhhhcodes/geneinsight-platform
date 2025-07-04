@@ -395,7 +395,7 @@ ${sequence}`
                 viewer.render();
 
                 viewerInitialized = true;
-                console.log('3DMol viewer fully initialized and rendered!');
+                console.log('3DMol viewer fully initialized and rendered! (v2.0 - spectrum colors)');
 
                 // Verify viewer is working and molecules are visible
                 setTimeout(() => {
@@ -489,7 +489,7 @@ ${sequence}`
                 console.log('Changing style to:', style);
 
                 // Models are already loaded (API detection issue), just change style
-                console.log('Changing style - models are already present');
+                console.log('Changing style - models are already present (v2.0)');
 
                 // Apply style with supported colors
                 switch(style) {
