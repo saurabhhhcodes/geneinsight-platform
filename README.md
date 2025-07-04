@@ -95,7 +95,7 @@ GeneInsight Platform is a comprehensive bioinformatics application that combines
 
 ### **1. Clone Repository**
 ```bash
-git clone https://github.com/yourusername/geneinsight-platform.git
+git clone https://github.com/8packcoder/geneinsight-platform.git
 cd geneinsight-platform
 ```
 
@@ -230,8 +230,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/geneinsight-platform/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/geneinsight-platform/discussions)
+- **Issues**: [GitHub Issues](https://github.com/8packcoder/geneinsight-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/8packcoder/geneinsight-platform/discussions)
 - **Email**: support@geneinsight.com
 
 ## 🙏 Acknowledgments
