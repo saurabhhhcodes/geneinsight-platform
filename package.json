@@ -47,6 +47,7 @@
     "date-fns": "^3.0.0",
     "embla-carousel-react": "8.5.1",
     "express": "^5.1.0",
+    "formidable": "^3.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
@@ -66,6 +67,7 @@
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/formidable": "^3.4.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "postcss": "^8.5",

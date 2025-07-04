@@ -1,6 +1,6 @@
 // API utility functions for GeneInsight Platform
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Generic API request function
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
@@ -161,7 +161,7 @@ export const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Function to use mock data when backend is not available
 export const useMockData = () => {
-  return !process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_URL.includes('localhost');
+  return false; // Always use real API now
 };
 
 export default {
