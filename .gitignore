@@ -55,6 +55,12 @@ __pycache__/
 *.gz
 *.tar
 
+# Large build artifacts
+target/
+*.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
 # Temporary files
 temp_maven/
 apache-maven-3.9.6/
@@ -68,3 +74,7 @@ maven.zip
 
 # Sample files
 sample_dna.pdb
+
+# Large files that exceed GitHub limits
+DockerDesktopInstaller.exe
+target/geneinsight-backend-1.0.0.jar
