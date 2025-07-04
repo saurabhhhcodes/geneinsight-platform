@@ -1,0 +1,23 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+numReplicas = 1
+sleepApplication = false
+restartPolicyType = "ON_FAILURE"
+
+[[services]]
+name = "geneinsight-backend"
+source = "."
+dockerfile = "Dockerfile"
+
+[[services]]
+name = "geneinsight-frontend"
+source = "."
+dockerfile = "frontend.Dockerfile"
+
+[[services]]
+name = "geneinsight-ml"
+source = "ml_service"
+dockerfile = "ml_service/Dockerfile"
