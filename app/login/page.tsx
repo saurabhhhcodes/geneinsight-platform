@@ -22,11 +22,33 @@ export default function LoginPage() {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate login
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      // Simple validation
+      if (!email || !password) {
+        throw new Error('Please enter both email and password')
+      }
+
+      if (!email.includes('@')) {
+        throw new Error('Please enter a valid email address')
+      }
+
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters long')
+      }
+
+      // Simulate login API call
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
+      // For demo purposes, accept any valid email/password combination
+      console.log('Login successful for:', email)
       router.push("/dashboard")
-    }, 1500)
+
+    } catch (err) {
+      console.error('Login error:', err)
+      alert(err instanceof Error ? err.message : 'Login failed. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

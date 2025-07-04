@@ -1,6 +1,14 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+
+// TypeScript declarations for 3DMol.js
+declare global {
+  interface Window {
+    $3Dmol: any;
+    $: any;
+  }
+}
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -136,11 +144,40 @@ export default function VisualizePage() {
   ])
 
   useEffect(() => {
-    // Initialize the 3D viewer with 3Dmol.js
-    const initTimer = setTimeout(() => {
-      initializeMolecularViewer()
-    }, 500)
+    // Load 3DMol.js library first, then initialize viewer
+    const load3DMol = () => {
+      // Check if 3DMol is already loaded
+      if (window.$3Dmol) {
+        initializeMolecularViewer()
+        return
+      }
 
+      // Load jQuery first (required by 3DMol.js)
+      const jqueryScript = document.createElement('script')
+      jqueryScript.src = 'https://code.jquery.com/jquery-3.6.0.min.js'
+      jqueryScript.onload = () => {
+        // Load 3DMol.js after jQuery
+        const script = document.createElement('script')
+        script.src = 'https://3dmol.csb.pitt.edu/build/3Dmol-min.js'
+        script.onload = () => {
+          console.log('3DMol.js loaded successfully')
+          setTimeout(() => {
+            initializeMolecularViewer()
+          }, 500)
+        }
+        script.onerror = () => {
+          console.error('Failed to load 3DMol.js')
+          setIsLoaded(true) // Set loaded to true even on error to show fallback
+        }
+        document.head.appendChild(script)
+      }
+      jqueryScript.onerror = () => {
+        console.error('Failed to load jQuery')
+      }
+      document.head.appendChild(jqueryScript)
+    }
+
+    const initTimer = setTimeout(load3DMol, 100)
     return () => clearTimeout(initTimer)
   }, [])
 
