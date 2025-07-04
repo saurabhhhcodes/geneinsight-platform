@@ -1,6 +1,6 @@
 "use client"
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ""
 
 interface ApiResponse<T = any> {
   data?: T;
@@ -80,7 +80,7 @@ class ApiService {
 
   // Simple sequence analysis (no authentication required)
   async analyzeSequenceSimple(sequence: string): Promise<ApiResponse<any>> {
-    const response = await fetch(`${API_BASE_URL}/api/sequences/analyze/simple`, {
+    const response = await fetch('/api/analysis/upload', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sequence }),

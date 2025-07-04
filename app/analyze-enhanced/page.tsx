@@ -151,17 +151,14 @@ Note: 3D Visualizer integration coming soon!`)
         })
       }, 500)
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${apiUrl}/api/sequences/analyze-with-structure`, {
+      const response = await fetch('/api/analysis/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        mode: 'cors',
         body: JSON.stringify({
-          sequence: sequence.trim(),
-          include3D: include3D
+          sequence: sequence.trim()
         }),
       })
 
@@ -192,14 +189,12 @@ Note: 3D Visualizer integration coming soon!`)
     setError("")
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${apiUrl}/api/sequences/generate-3d-structure`, {
+      const response = await fetch('/api/analysis/structure', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        mode: 'cors',
         body: JSON.stringify({
           sequence: sequence.trim()
         }),
