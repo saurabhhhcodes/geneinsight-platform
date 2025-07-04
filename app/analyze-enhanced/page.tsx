@@ -110,7 +110,7 @@ ${sequence}`
         <head>
           <title>3D Protein Structure - ${results.structure3D.structureId}</title>
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+          <script src="https://3dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
             .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -236,14 +236,18 @@ ${sequence}`
             let isSpinning = false;
             let viewerInitialized = false;
 
-            // Initialize 3DMol viewer with proper error handling
+            // Initialize 3DMol viewer with comprehensive error handling
             function initViewer() {
               try {
                 console.log('Initializing 3DMol viewer...');
 
-                // Check if 3DMol is loaded
+                // Check if 3DMol is loaded and has required functions
                 if (typeof $3Dmol === 'undefined') {
                   throw new Error('3DMol library not loaded');
+                }
+
+                if (typeof $3Dmol.createViewer !== 'function') {
+                  throw new Error('3DMol createViewer function not available');
                 }
 
                 const element = document.getElementById('viewer');
@@ -255,14 +259,17 @@ ${sequence}`
                 const loadingMsg = document.getElementById('loadingMessage');
                 if (loadingMsg) loadingMsg.style.display = 'none';
 
-                // Create viewer with proper configuration
+                // Create viewer with minimal configuration to avoid errors
                 const config = {
-                  backgroundColor: 'black',
-                  antialias: true,
-                  alpha: true
+                  backgroundColor: 'black'
                 };
 
+                console.log('Creating 3DMol viewer...');
                 viewer = $3Dmol.createViewer(element, config);
+
+                if (!viewer) {
+                  throw new Error('Failed to create 3DMol viewer instance');
+                }
 
                 // Load the generated PDB data
                 const pdbData = document.getElementById('pdbData').textContent;
@@ -272,17 +279,39 @@ ${sequence}`
                 }
 
                 console.log('Loading PDB data...');
-                viewer.addModel(pdbData, 'pdb');
-                viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.8}});
-                viewer.zoomTo();
-                viewer.render();
+
+                // Add model with error handling
+                try {
+                  viewer.addModel(pdbData, 'pdb');
+                } catch (modelError) {
+                  console.error('Error adding model:', modelError);
+                  throw new Error('Failed to load PDB data into viewer');
+                }
+
+                // Set style with error handling
+                try {
+                  viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+                } catch (styleError) {
+                  console.error('Error setting style:', styleError);
+                  // Try simpler style
+                  viewer.setStyle({}, {cartoon: {}});
+                }
+
+                // Zoom and render with error handling
+                try {
+                  viewer.zoomTo();
+                  viewer.render();
+                } catch (renderError) {
+                  console.error('Error rendering:', renderError);
+                  throw new Error('Failed to render 3D structure');
+                }
 
                 viewerInitialized = true;
                 console.log('3DMol viewer initialized successfully');
 
               } catch (error) {
                 console.error('Viewer initialization error:', error);
-                showError('Failed to initialize 3D viewer: ' + error.message);
+                showError('Failed to initialize 3D viewer: ' + error.message + '. Try refreshing the page.');
               }
             }
 
@@ -513,13 +542,28 @@ ${sequence}`
               });
             }
 
-            // Initialize viewer when page loads
+            // Initialize viewer when page loads with fallback loading
             window.onload = function() {
               console.log('Page loaded, checking for libraries...');
 
+              // Try multiple CDN sources for 3DMol.js
+              function loadFallback3DMol() {
+                const script = document.createElement('script');
+                script.src = 'https://3dmol.org/build/3Dmol-min.js';
+                script.onload = function() {
+                  console.log('Fallback 3DMol loaded');
+                  setTimeout(initViewer, 1000);
+                };
+                script.onerror = function() {
+                  console.error('All 3DMol sources failed');
+                  showError('Failed to load 3DMol.js library. Please check your internet connection and refresh.');
+                };
+                document.head.appendChild(script);
+              }
+
               // Check if libraries are loaded with multiple attempts
               let attempts = 0;
-              const maxAttempts = 20; // Increased attempts
+              const maxAttempts = 15;
 
               function checkLibraries() {
                 attempts++;
@@ -527,13 +571,13 @@ ${sequence}`
 
                 if (typeof $ !== 'undefined' && typeof $3Dmol !== 'undefined') {
                   console.log('Libraries loaded successfully, initializing viewer...');
-                  setTimeout(initViewer, 500); // Small delay to ensure DOM is ready
+                  setTimeout(initViewer, 500);
                 } else if (attempts < maxAttempts) {
                   console.log('Libraries not ready, retrying in 500ms...');
                   setTimeout(checkLibraries, 500);
                 } else {
-                  console.error('Failed to load required libraries after', maxAttempts, 'attempts');
-                  showError('Failed to load 3D visualization libraries. Please refresh the page and try again.');
+                  console.log('Primary CDN failed, trying fallback...');
+                  loadFallback3DMol();
                 }
               }
 

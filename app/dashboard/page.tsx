@@ -20,8 +20,54 @@ export default function DashboardPage() {
     firstName: "User",
     lastName: "",
     email: "user@example.com",
-    role: "RESEARCHER"
+    role: "RESEARCHER",
+    avatar: "",
+    lastLogin: new Date().toISOString(),
+    analysisCount: 247,
+    unreadNotifications: 3,
+    institution: "",
+    joinDate: new Date().toISOString()
   })
+
+  // Notifications state
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: "success",
+      title: "Analysis Complete",
+      message: "Your DNA sequence analysis for sample #247 has been completed successfully.",
+      time: "2 minutes ago",
+      read: false,
+      timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString()
+    },
+    {
+      id: 2,
+      type: "info",
+      title: "New Feature Available",
+      message: "3D protein structure generation is now available in Enhanced Analysis.",
+      time: "1 hour ago",
+      read: false,
+      timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 3,
+      type: "warning",
+      title: "Storage Limit",
+      message: "You're approaching your storage limit. Consider archiving old analyses.",
+      time: "3 hours ago",
+      read: false,
+      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 4,
+      type: "info",
+      title: "System Maintenance",
+      message: "Scheduled maintenance will occur tonight from 2-4 AM EST.",
+      time: "1 day ago",
+      read: true,
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    }
+  ])
 
   // Load user data from localStorage or API
   useEffect(() => {
@@ -117,6 +163,7 @@ export default function DashboardPage() {
             <Badge variant="secondary">Dashboard</Badge>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Notifications */}
             <Button
               variant="ghost"
               size="sm"
@@ -124,24 +171,31 @@ export default function DashboardPage() {
               className="relative"
             >
               <Bell className="h-4 w-4" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-                2
-              </span>
+              {user.unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                  {user.unreadNotifications}
+                </span>
+              )}
             </Button>
+
+            {/* User Info Display */}
+            <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 rounded-lg">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                {user.firstName.charAt(0)}{user.lastName.charAt(0) || user.firstName.charAt(1)}
+              </div>
+              <div className="text-sm">
+                <div className="font-medium text-gray-900">{getDisplayName()}</div>
+                <div className="text-gray-500">{user.role}</div>
+              </div>
+            </div>
+
+            {/* Settings */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowUserSettings(true)}
             >
               <Settings className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowUserSettings(true)}
-            >
-              <User className="h-4 w-4" />
-              {getDisplayName()}
             </Button>
           </div>
         </div>
