@@ -286,9 +286,9 @@ ${sequence}`
 
                 console.log('Creating 3DMol viewer instance...');
 
-                // Create viewer with better visibility configuration
+                // Create viewer with optimal visibility configuration
                 const config = {
-                  backgroundColor: '#1a1a1a', // Dark gray instead of pure black
+                  backgroundColor: '#2a2a2a', // Medium gray for better contrast
                   antialias: true,
                   alpha: true
                 };
@@ -323,32 +323,30 @@ ${sequence}`
 
                 console.log('Setting visualization style...');
 
-                // Set style with better visibility options
+                // Set style with maximum visibility
                 try {
-                  // Use larger, more visible styling
+                  // Use bright, highly visible styling
                   viewer.setStyle({}, {
                     cartoon: {
-                      color: 'spectrum',
-                      thickness: 1.2,
-                      opacity: 0.9
+                      color: 'rainbow',
+                      thickness: 1.5
                     }
                   });
                 } catch (styleError) {
-                  console.warn('Spectrum coloring failed, using bright colors:', styleError);
+                  console.warn('Rainbow coloring failed, using bright cyan:', styleError);
                   try {
                     viewer.setStyle({}, {
                       cartoon: {
-                        color: 'cyan',
-                        thickness: 1.2,
-                        opacity: 0.9
+                        color: '#00FFFF', // Bright cyan
+                        thickness: 1.5
                       }
                     });
                   } catch (fallbackError) {
                     console.warn('Cartoon style failed, using bright sticks:', fallbackError);
                     viewer.setStyle({}, {
                       stick: {
-                        color: 'white',
-                        radius: 0.5
+                        color: '#FFFFFF', // Pure white
+                        radius: 0.6
                       }
                     });
                   }
@@ -356,17 +354,10 @@ ${sequence}`
 
                 console.log('Rendering viewer...');
 
-                // Better zoom and lighting
+                // Zoom to fit the molecule properly
                 viewer.zoomTo();
 
-                // Add lighting for better visibility
-                viewer.addLight({
-                  color: 'white',
-                  intensity: 0.8,
-                  position: [10, 10, 10]
-                });
-
-                // Render with better settings
+                // Render the viewer
                 viewer.render();
 
                 viewerInitialized = true;
@@ -465,23 +456,21 @@ ${sequence}`
                   viewer.addModel(pdbData, 'pdb');
                 }
 
-                // Apply style with better visibility
+                // Apply style with maximum visibility
                 switch(style) {
                   case 'cartoon':
                     try {
                       viewer.setStyle({}, {
                         cartoon: {
-                          color: 'spectrum',
-                          thickness: 1.2,
-                          opacity: 0.9
+                          color: 'rainbow',
+                          thickness: 1.5
                         }
                       });
                     } catch (e) {
                       viewer.setStyle({}, {
                         cartoon: {
-                          color: 'cyan',
-                          thickness: 1.2,
-                          opacity: 0.9
+                          color: '#00FFFF', // Bright cyan
+                          thickness: 1.5
                         }
                       });
                     }
@@ -490,17 +479,15 @@ ${sequence}`
                     try {
                       viewer.setStyle({}, {
                         sphere: {
-                          color: 'spectrum',
-                          radius: 1.2,
-                          opacity: 0.8
+                          color: 'rainbow',
+                          radius: 1.4
                         }
                       });
                     } catch (e) {
                       viewer.setStyle({}, {
                         sphere: {
-                          color: 'yellow',
-                          radius: 1.2,
-                          opacity: 0.8
+                          color: '#FFFF00', // Bright yellow
+                          radius: 1.4
                         }
                       });
                     }
@@ -509,15 +496,15 @@ ${sequence}`
                     try {
                       viewer.setStyle({}, {
                         stick: {
-                          color: 'spectrum',
-                          radius: 0.4
+                          color: 'rainbow',
+                          radius: 0.5
                         }
                       });
                     } catch (e) {
                       viewer.setStyle({}, {
                         stick: {
-                          color: 'white',
-                          radius: 0.4
+                          color: '#FFFFFF', // Pure white
+                          radius: 0.5
                         }
                       });
                     }
@@ -649,22 +636,20 @@ Debug Information:
                       }
 
                       console.log('Setting style...');
-                      // Try spectrum coloring with better visibility
+                      // Try rainbow coloring for maximum visibility
                       try {
                         viewer.setStyle({}, {
                           cartoon: {
-                            color: 'spectrum',
-                            thickness: 1.2,
-                            opacity: 0.9
+                            color: 'rainbow',
+                            thickness: 1.5
                           }
                         });
                       } catch (styleError) {
-                        console.warn('Spectrum coloring failed, using bright cyan:', styleError);
+                        console.warn('Rainbow coloring failed, using bright cyan:', styleError);
                         viewer.setStyle({}, {
                           cartoon: {
-                            color: 'cyan',
-                            thickness: 1.2,
-                            opacity: 0.9
+                            color: '#00FFFF', // Bright cyan
+                            thickness: 1.5
                           }
                         });
                       }
