@@ -33,11 +33,8 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
   },
 
-  // Experimental features
-  experimental: {
-    // Enable server components
-    serverComponentsExternalPackages: ['3dmol'],
-  },
+  // Server external packages
+  serverExternalPackages: ['3dmol'],
 }
 
 export default nextConfig

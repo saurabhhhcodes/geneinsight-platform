@@ -1,0 +1,175 @@
+// API utility functions for GeneInsight Platform
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+// Generic API request function
+async function apiRequest(endpoint: string, options: RequestInit = {}) {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  const defaultOptions: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  try {
+    const response = await fetch(url, defaultOptions);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('API request error:', error);
+    throw error;
+  }
+}
+
+// Authentication API
+export const authAPI = {
+  login: async (credentials: { email: string; password: string }) => {
+    return apiRequest('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+  },
+
+  register: async (userData: { email: string; password: string; name: string }) => {
+    return apiRequest('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  },
+
+  verifyOTP: async (data: { email: string; otp: string }) => {
+    return apiRequest('/api/auth/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
+// Analysis API
+export const analysisAPI = {
+  uploadFile: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return apiRequest('/api/analysis/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {}, // Remove Content-Type to let browser set it for FormData
+    });
+  },
+
+  getAnalysis: async (id: string) => {
+    return apiRequest(`/api/analysis/${id}`);
+  },
+
+  getAllAnalyses: async () => {
+    return apiRequest('/api/analysis');
+  },
+
+  generateStructure: async (sequence: string) => {
+    return apiRequest('/api/analysis/structure', {
+      method: 'POST',
+      body: JSON.stringify({ sequence }),
+    });
+  },
+};
+
+// Reports API
+export const reportsAPI = {
+  getReports: async () => {
+    return apiRequest('/api/reports');
+  },
+
+  getReport: async (id: string) => {
+    return apiRequest(`/api/reports/${id}`);
+  },
+
+  generateReport: async (analysisId: string) => {
+    return apiRequest('/api/reports/generate', {
+      method: 'POST',
+      body: JSON.stringify({ analysisId }),
+    });
+  },
+
+  exportReport: async (id: string, format: 'pdf' | 'csv' | 'json') => {
+    return apiRequest(`/api/reports/${id}/export?format=${format}`);
+  },
+};
+
+// ML Service API
+export const mlAPI = {
+  predict: async (data: any) => {
+    return apiRequest('/api/ml/predict', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  getMetrics: async () => {
+    return apiRequest('/api/ml/metrics');
+  },
+
+  health: async () => {
+    return apiRequest('/api/ml/health');
+  },
+};
+
+// Mock data for development/demo purposes
+export const mockData = {
+  analyses: [
+    {
+      id: '1',
+      name: 'Sample DNA Analysis',
+      status: 'completed',
+      createdAt: '2024-01-15T10:30:00Z',
+      results: {
+        confidence: 0.95,
+        prediction: 'Low Risk',
+        genes: ['BRCA1', 'BRCA2', 'TP53'],
+      },
+    },
+    {
+      id: '2',
+      name: 'Protein Structure Analysis',
+      status: 'processing',
+      createdAt: '2024-01-16T14:20:00Z',
+      results: null,
+    },
+  ],
+  
+  reports: [
+    {
+      id: '1',
+      title: 'Genetic Risk Assessment Report',
+      analysisId: '1',
+      createdAt: '2024-01-15T11:00:00Z',
+      status: 'ready',
+      summary: 'Comprehensive genetic analysis showing low risk factors.',
+    },
+  ],
+};
+
+// Utility function to check if we're in development mode
+export const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Function to use mock data when backend is not available
+export const useMockData = () => {
+  return !process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_URL.includes('localhost');
+};
+
+export default {
+  authAPI,
+  analysisAPI,
+  reportsAPI,
+  mlAPI,
+  mockData,
+  isDevelopment,
+  useMockData,
+};
