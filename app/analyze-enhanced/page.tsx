@@ -101,13 +101,113 @@ ${sequence}`
       return
     }
 
-    // For now, show an alert with structure info
-    alert(`3D Structure Information:
-Structure ID: ${results.structure3D.structureId}
-Confidence: ${results.structure3D.confidence}
-Method: ${results.structure3D.method}
+    // Create a new window with 3D structure data
+    const structureWindow = window.open('', '_blank', 'width=800,height=600')
+    if (structureWindow) {
+      structureWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>3D Protein Structure - ${results.structure3D.structureId}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+            .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            .header { text-align: center; margin-bottom: 20px; }
+            .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+            .info-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
+            .info-card h3 { margin: 0 0 5px 0; color: #007bff; }
+            .sequence-box { background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; }
+            .sequence { font-family: monospace; word-break: break-all; line-height: 1.4; }
+            .pdb-section { margin-top: 20px; }
+            .pdb-data { background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
+            .download-btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 5px; }
+            .download-btn:hover { background: #0056b3; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🧬 3D Protein Structure Analysis</h1>
+              <p>Structure ID: <strong>${results.structure3D.structureId}</strong></p>
+            </div>
 
-Note: 3D Visualizer integration coming soon!`)
+            <div class="info-grid">
+              <div class="info-card">
+                <h3>Confidence Score</h3>
+                <p>${(results.structure3D.confidence * 100).toFixed(1)}%</p>
+              </div>
+              <div class="info-card">
+                <h3>Method</h3>
+                <p>${results.structure3D.method}</p>
+              </div>
+              <div class="info-card">
+                <h3>Protein Length</h3>
+                <p>${results.structure3D.length} amino acids</p>
+              </div>
+              <div class="info-card">
+                <h3>Molecular Weight</h3>
+                <p>${results.structure3D.molecularProperties?.molecularWeight?.toFixed(0) || 'N/A'} Da</p>
+              </div>
+            </div>
+
+            <div class="sequence-box">
+              <h3>🔤 Protein Sequence</h3>
+              <div class="sequence">${results.structure3D.proteinSequence}</div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-card">
+                <h3>Alpha Helix</h3>
+                <p>${results.structure3D.secondaryStructure?.alphaHelix?.toFixed(1) || 'N/A'}%</p>
+              </div>
+              <div class="info-card">
+                <h3>Beta Sheet</h3>
+                <p>${results.structure3D.secondaryStructure?.betaSheet?.toFixed(1) || 'N/A'}%</p>
+              </div>
+              <div class="info-card">
+                <h3>Loop Regions</h3>
+                <p>${results.structure3D.secondaryStructure?.loop?.toFixed(1) || 'N/A'}%</p>
+              </div>
+              <div class="info-card">
+                <h3>Isoelectric Point</h3>
+                <p>${results.structure3D.molecularProperties?.isoelectricPoint?.toFixed(2) || 'N/A'}</p>
+              </div>
+            </div>
+
+            <div class="pdb-section">
+              <h3>📄 PDB Structure Data</h3>
+              <button class="download-btn" onclick="downloadPDB()">Download PDB File</button>
+              <button class="download-btn" onclick="copyPDB()">Copy to Clipboard</button>
+              <div class="pdb-data" id="pdbData">${results.structure3D.pdbData}</div>
+            </div>
+          </div>
+
+          <script>
+            function downloadPDB() {
+              const pdbData = document.getElementById('pdbData').textContent;
+              const blob = new Blob([pdbData], { type: 'text/plain' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = '${results.structure3D.structureId}.pdb';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            }
+
+            function copyPDB() {
+              const pdbData = document.getElementById('pdbData').textContent;
+              navigator.clipboard.writeText(pdbData).then(() => {
+                alert('PDB data copied to clipboard!');
+              });
+            }
+          </script>
+        </body>
+        </html>
+      `)
+      structureWindow.document.close()
+    }
   }
   const [progress, setProgress] = useState(0)
 
@@ -167,6 +267,10 @@ Note: 3D Visualizer integration coming soon!`)
 
       if (response.ok) {
         const data = await response.json()
+        // Temporary debug - remove after testing
+        if (typeof window !== 'undefined') {
+          console.log('API Response:', data)
+        }
         setResults(data)
       } else {
         const errorData = await response.json()
@@ -204,7 +308,7 @@ Note: 3D Visualizer integration coming soon!`)
         const data = await response.json()
         setResults(prev => ({
           ...prev,
-          structure3D: data.data?.structure3D || data.structure3D
+          structure3D: data.structure3D
         }))
       } else {
         const errorData = await response.json()

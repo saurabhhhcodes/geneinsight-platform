@@ -126,14 +126,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Generate protein structure
     const structure = generateProteinStructure(sequence);
     
-    res.status(200).json({
-      success: true,
-      data: structure
-    });
+    res.status(200).json(structure);
 
   } catch (error) {
-    console.error('Structure generation error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Structure generation failed',
       message: error instanceof Error ? error.message : 'Unknown error'
     });

@@ -103,15 +103,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Analyze sequence
     const analysis = analyzeDNASequence(sequence);
-    
-    res.status(200).json({
-      success: true,
-      data: analysis
-    });
+
+    // Return the exact format the frontend expects
+    res.status(200).json(analysis);
 
   } catch (error) {
-    console.error('Analysis error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Analysis failed',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
