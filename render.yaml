@@ -1,37 +1,30 @@
-services:
-  # Database Service (PostgreSQL - Free on Render)
-  - type: pserv
-    name: geneinsight-database
+databases:
+  - name: geneinsight-database
     databaseName: geneinsight
     user: geneinsight_user
-    plan: free
 
+services:
   # ML Service
   - type: web
     name: geneinsight-ml
     env: docker
-    plan: free
     dockerfilePath: ./ml_service/Dockerfile
     dockerContext: ./ml_service
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: PORT
-        value: 10000
     healthCheckPath: /health
 
   # Backend Service
   - type: web
     name: geneinsight-backend
     env: docker
-    plan: free
     dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
       - key: DATABASE_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: geneinsight-database
           property: connectionString
       - key: ML_SERVICE_URL
@@ -39,8 +32,6 @@ services:
           type: web
           name: geneinsight-ml
           property: hostWithProtocol
-      - key: PORT
-        value: 10000
       - key: MAIL_USERNAME
         value: noreply@geneinsight.com
       - key: MAIL_PASSWORD
@@ -53,7 +44,6 @@ services:
   - type: web
     name: geneinsight-frontend
     env: docker
-    plan: free
     dockerfilePath: ./frontend.Dockerfile
     envVars:
       - key: NEXT_PUBLIC_API_URL
@@ -61,5 +51,3 @@ services:
           type: web
           name: geneinsight-backend
           property: hostWithProtocol
-      - key: PORT
-        value: 10000
