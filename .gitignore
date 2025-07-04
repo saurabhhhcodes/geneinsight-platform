@@ -1,0 +1,70 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+node_modules/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+target/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+*.log
+
+# env files
+.env*
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Java/Maven
+*.class
+*.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Installers and executables
+*.exe
+*.msi
+*.zip
+*.gz
+*.tar
+
+# Temporary files
+temp_maven/
+apache-maven-3.9.6/
+cloudflared.exe
+ngrok.exe
+ngrok.zip
+DockerDesktopInstaller.exe
+nodejs-installer.msi
+python-installer.exe
+maven.zip
+
+# Sample files
+sample_dna.pdb

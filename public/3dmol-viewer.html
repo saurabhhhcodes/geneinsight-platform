@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Molecular Viewer</title>
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #viewer { width: 100%; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="viewer"></div>
+    
+    <script>
+        // Initialize 3Dmol viewer
+        let viewer = $3Dmol.createViewer('viewer', {
+            defaultcolors: $3Dmol.rasmolElementColors
+        });
+        
+        // Load DNA structure (example PDB: 1BNA - DNA double helix)
+        $3Dmol.download("pdb:1BNA", viewer, {}, function() {
+            viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+            viewer.setStyle({resn: 'DA'}, {stick: {colorscheme: 'blueCarbon'}});
+            viewer.setStyle({resn: 'DT'}, {stick: {colorscheme: 'redCarbon'}});
+            viewer.setStyle({resn: 'DG'}, {stick: {colorscheme: 'greenCarbon'}});
+            viewer.setStyle({resn: 'DC'}, {stick: {colorscheme: 'yellowCarbon'}});
+            
+            viewer.zoomTo();
+            viewer.render();
+            viewer.zoom(1.2, 1000);
+        });
+        
+        // Auto-rotation
+        let isRotating = true;
+        function rotate() {
+            if (isRotating) {
+                viewer.rotate(1, 'y');
+                viewer.render();
+            }
+            requestAnimationFrame(rotate);
+        }
+        rotate();
+        
+        // Communication with parent window
+        window.addEventListener('message', function(event) {
+            const { action, data } = event.data;
+            
+            switch(action) {
+                case 'loadStructure':
+                    loadStructure(data.pdbId);
+                    break;
+                case 'setStyle':
+                    setVisualizationStyle(data.style);
+                    break;
+                case 'toggleRotation':
+                    isRotating = !isRotating;
+                    break;
+                case 'resetView':
+                    viewer.zoomTo();
+                    viewer.render();
+                    break;
+            }
+        });
+        
+        function loadStructure(pdbId) {
+            viewer.clear();
+            $3Dmol.download(`pdb:${pdbId}`, viewer, {}, function() {
+                viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
+                viewer.zoomTo();
+                viewer.render();
+            });
+        }
+        
+        function setVisualizationStyle(style) {
+            viewer.setStyle({}, style);
+            viewer.render();
+        }
+    </script>
+</body>
+</html>

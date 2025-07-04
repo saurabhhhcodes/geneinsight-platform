@@ -1,0 +1,68 @@
+services:
+  # Database Service
+  - type: pserv
+    name: geneinsight-database
+    env: docker
+    dockerfilePath: ./database.Dockerfile
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: rootpassword
+      - key: MYSQL_DATABASE
+        value: geneinsight
+      - key: MYSQL_USER
+        value: geneinsight_user
+      - key: MYSQL_PASSWORD
+        value: geneinsight_password
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+
+  # ML Service
+  - type: web
+    name: geneinsight-ml
+    env: docker
+    dockerfilePath: ./ml_service/Dockerfile
+    dockerContext: ./ml_service
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    healthCheckPath: /health
+
+  # Backend Service
+  - type: web
+    name: geneinsight-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SPRING_DATASOURCE_URL
+        fromService:
+          type: pserv
+          name: geneinsight-database
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        value: geneinsight_user
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: geneinsight_password
+      - key: ML_SERVICE_URL
+        fromService:
+          type: web
+          name: geneinsight-ml
+          property: host
+    healthCheckPath: /actuator/health
+
+  # Frontend Service
+  - type: web
+    name: geneinsight-frontend
+    env: docker
+    dockerfilePath: ./frontend.Dockerfile
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: geneinsight-backend
+          property: host
+    buildCommand: npm run build
+    startCommand: npm start

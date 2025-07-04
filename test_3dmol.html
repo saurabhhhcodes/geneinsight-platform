@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3Dmol.js Test</title>
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <style>
+        #viewer {
+            width: 500px;
+            height: 400px;
+            border: 2px solid #ccc;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>3Dmol.js Test</h1>
+    <div id="viewer"></div>
+    <button onclick="loadMolecule()">Load Test Molecule</button>
+    
+    <script>
+        let viewer;
+        
+        function initViewer() {
+            console.log("Initializing 3Dmol viewer...");
+            
+            if (typeof $3Dmol !== 'undefined') {
+                console.log("3Dmol.js is available");
+                
+                viewer = $3Dmol.createViewer(document.getElementById('viewer'), {
+                    backgroundColor: 'white'
+                });
+                
+                console.log("Viewer created:", viewer);
+                
+                // Add a simple test sphere
+                viewer.addSphere({
+                    center: { x: 0, y: 0, z: 0 },
+                    radius: 2.0,
+                    color: 'red'
+                });
+                
+                viewer.render();
+                console.log("Test sphere added and rendered");
+            } else {
+                console.error("3Dmol.js not available");
+                setTimeout(initViewer, 1000);
+            }
+        }
+        
+        function loadMolecule() {
+            if (viewer) {
+                viewer.clear();
+                
+                const pdb = `ATOM      1  C   BEN A   1       0.000   1.400   0.000  1.00  0.00           C  
+ATOM      2  C   BEN A   1       1.212   0.700   0.000  1.00  0.00           C  
+ATOM      3  C   BEN A   1       1.212  -0.700   0.000  1.00  0.00           C  
+ATOM      4  C   BEN A   1       0.000  -1.400   0.000  1.00  0.00           C  
+ATOM      5  C   BEN A   1      -1.212  -0.700   0.000  1.00  0.00           C  
+ATOM      6  C   BEN A   1      -1.212   0.700   0.000  1.00  0.00           C  
+END`;
+                
+                viewer.addModel(pdb, "pdb");
+                viewer.setStyle({}, {stick: {colorscheme: 'greenCarbon'}});
+                viewer.zoomTo();
+                viewer.render();
+                
+                console.log("Benzene molecule loaded");
+            }
+        }
+        
+        // Initialize when page loads
+        window.onload = function() {
+            setTimeout(initViewer, 500);
+        };
+    </script>
+</body>
+</html>
