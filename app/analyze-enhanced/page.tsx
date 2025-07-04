@@ -309,15 +309,25 @@ ${sequence}`
 
                 console.log('Adding PDB model...');
 
-                // Add model with error handling
+                // Add model with comprehensive error handling
                 try {
+                  console.log('PDB data preview:', pdbData.substring(0, 200) + '...');
                   const model = viewer.addModel(pdbData, 'pdb');
                   if (!model) {
-                    throw new Error('Failed to parse PDB data');
+                    throw new Error('Failed to parse PDB data - model is null');
                   }
-                  console.log('PDB model added successfully');
+
+                  // Check if model has atoms
+                  const atoms = model.selectedAtoms({});
+                  console.log('Model added successfully, atoms found:', atoms.length);
+
+                  if (atoms.length === 0) {
+                    throw new Error('PDB model loaded but contains no atoms - check PDB format');
+                  }
+
                 } catch (modelError) {
                   console.error('Model error:', modelError);
+                  console.error('PDB data that failed:', pdbData);
                   throw new Error('Failed to add PDB model: ' + modelError.message);
                 }
 
@@ -540,7 +550,7 @@ ${sequence}`
               }
             }
 
-            // Debug function to check viewer status
+            // Debug function to check viewer status and PDB format
             function debugViewer() {
               if (!viewer) {
                 alert('Viewer not initialized');
@@ -556,6 +566,12 @@ ${sequence}`
                   atomCount = models[0].selectedAtoms({}).length;
                 }
 
+                // Check PDB data format
+                const pdbData = document.getElementById('pdbData').textContent;
+                const pdbLines = pdbData.split('\\n');
+                const atomLines = pdbLines.filter(line => line.startsWith('ATOM'));
+                const firstAtomLine = atomLines[0] || 'No ATOM lines found';
+
                 const debugInfo = \`
 Debug Information:
 - Viewer initialized: \${viewerInitialized}
@@ -564,7 +580,12 @@ Debug Information:
 - 3DMol available: \${typeof window.$3Dmol !== 'undefined'}
 - Viewer spinning: \${isSpinning}
 
-\${atomCount === 0 ? 'WARNING: No atoms detected - molecules may not be visible!' : 'Atoms detected - molecules should be visible'}
+PDB Format Check:
+- Total PDB lines: \${pdbLines.length}
+- ATOM lines found: \${atomLines.length}
+- First ATOM line: \${firstAtomLine.substring(0, 80)}
+
+\${atomCount === 0 ? 'WARNING: No atoms detected - check PDB format!' : 'Atoms detected - molecules should be visible'}
                 \`;
 
                 alert(debugInfo);
@@ -573,7 +594,8 @@ Debug Information:
                   modelCount,
                   atomCount,
                   viewer,
-                  models
+                  models,
+                  pdbPreview: pdbData.substring(0, 300)
                 });
 
               } catch (error) {
