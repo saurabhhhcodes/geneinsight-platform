@@ -1,38 +1,41 @@
 services:
-  # Database Service
+  # Database Service (PostgreSQL - Free on Render)
   - type: pserv
     name: geneinsight-database
     env: docker
-    dockerfilePath: ./database.Dockerfile
+    plan: free
+    dockerfilePath: ./postgres.Dockerfile
     envVars:
-      - key: MYSQL_ROOT_PASSWORD
-        value: rootpassword
-      - key: MYSQL_DATABASE
+      - key: POSTGRES_DB
         value: geneinsight
-      - key: MYSQL_USER
+      - key: POSTGRES_USER
         value: geneinsight_user
-      - key: MYSQL_PASSWORD
+      - key: POSTGRES_PASSWORD
         value: geneinsight_password
     disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 10
+      name: postgres-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
 
   # ML Service
   - type: web
     name: geneinsight-ml
     env: docker
+    plan: free
     dockerfilePath: ./ml_service/Dockerfile
     dockerContext: ./ml_service
     envVars:
       - key: FLASK_ENV
         value: production
+      - key: PORT
+        value: 10000
     healthCheckPath: /health
 
   # Backend Service
   - type: web
     name: geneinsight-backend
     env: docker
+    plan: free
     dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_PROFILES_ACTIVE
@@ -51,12 +54,15 @@ services:
           type: web
           name: geneinsight-ml
           property: host
+      - key: PORT
+        value: 10000
     healthCheckPath: /actuator/health
 
   # Frontend Service
   - type: web
     name: geneinsight-frontend
     env: docker
+    plan: free
     dockerfilePath: ./frontend.Dockerfile
     envVars:
       - key: NEXT_PUBLIC_API_URL
@@ -64,5 +70,7 @@ services:
           type: web
           name: geneinsight-backend
           property: host
+      - key: PORT
+        value: 10000
     buildCommand: npm run build
     startCommand: npm start

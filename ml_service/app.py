@@ -165,5 +165,7 @@ def health_check():
     })
 
 if __name__ == '__main__':
+    import os
     load_model()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
