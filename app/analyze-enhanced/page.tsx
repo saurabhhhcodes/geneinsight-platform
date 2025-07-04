@@ -109,6 +109,7 @@ ${sequence}`
         <html>
         <head>
           <title>3D Protein Structure - ${results.structure3D.structureId}</title>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
           <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
@@ -117,7 +118,9 @@ ${sequence}`
             .main-content { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
             .viewer-section { background: #f8f9fa; border-radius: 8px; padding: 20px; }
             .info-section { }
-            .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: black; position: relative; }
+            .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: #1a1a1a; position: relative; }
+            .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 16px; }
+            .error-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff6b6b; font-size: 14px; text-align: center; }
             .viewer-controls { margin-top: 10px; text-align: center; }
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
             .info-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
@@ -145,7 +148,14 @@ ${sequence}`
             <div class="main-content">
               <div class="viewer-section">
                 <h3>🎯 Interactive 3D Viewer</h3>
-                <div id="viewer" class="viewer-container"></div>
+                <div id="viewer" class="viewer-container">
+                  <div id="loadingMessage" class="loading-message">Loading 3D viewer...</div>
+                  <div id="errorMessage" class="error-message" style="display: none;">
+                    3D viewer failed to load.<br>
+                    <button class="btn" onclick="retryViewer()">Retry</button>
+                    <button class="btn" onclick="showSimpleViewer()">Simple View</button>
+                  </div>
+                </div>
                 <div class="viewer-controls">
                   <button class="btn" onclick="resetView()">Reset View</button>
                   <button class="btn" onclick="toggleStyle('cartoon')">Cartoon</button>
@@ -219,50 +229,130 @@ ${sequence}`
           <script>
             let viewer;
             let isSpinning = false;
+            let viewerInitialized = false;
 
-            // Initialize 3DMol viewer
+            // Initialize 3DMol viewer with error handling
             function initViewer() {
-              const element = document.getElementById('viewer');
-              const config = { backgroundColor: 'black' };
-              viewer = $3Dmol.createViewer(element, config);
+              try {
+                // Check if 3DMol is loaded
+                if (typeof $3Dmol === 'undefined') {
+                  throw new Error('3DMol library not loaded');
+                }
 
-              // Load the generated PDB data
-              const pdbData = document.getElementById('pdbData').textContent;
-              viewer.addModel(pdbData, 'pdb');
-              viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
-              viewer.zoomTo();
-              viewer.render();
+                const element = document.getElementById('viewer');
+                const config = {
+                  backgroundColor: '#1a1a1a',
+                  antialias: true,
+                  alpha: true
+                };
+
+                // Clear loading message
+                document.getElementById('loadingMessage').style.display = 'none';
+
+                viewer = $3Dmol.createViewer(element, config);
+
+                // Load the generated PDB data
+                const pdbData = document.getElementById('pdbData').textContent;
+
+                if (!pdbData || pdbData.trim() === '') {
+                  throw new Error('No PDB data available');
+                }
+
+                viewer.addModel(pdbData, 'pdb');
+                viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.5}});
+                viewer.zoomTo();
+                viewer.render();
+
+                viewerInitialized = true;
+                console.log('3D viewer initialized successfully');
+
+              } catch (error) {
+                console.error('Viewer initialization error:', error);
+                showError('Failed to initialize 3D viewer: ' + error.message);
+              }
+            }
+
+            // Show error message
+            function showError(message) {
+              document.getElementById('loadingMessage').style.display = 'none';
+              const errorDiv = document.getElementById('errorMessage');
+              errorDiv.innerHTML = message + '<br><button class="btn" onclick="retryViewer()">Retry</button>';
+              errorDiv.style.display = 'block';
+            }
+
+            // Retry viewer initialization
+            function retryViewer() {
+              document.getElementById('errorMessage').style.display = 'none';
+              document.getElementById('loadingMessage').style.display = 'block';
+              document.getElementById('loadingMessage').textContent = 'Retrying...';
+              setTimeout(initViewer, 1000);
+            }
+
+            // Show simple text-based viewer as fallback
+            function showSimpleViewer() {
+              const viewerDiv = document.getElementById('viewer');
+              viewerDiv.innerHTML = \`
+                <div style="padding: 20px; color: white; text-align: center;">
+                  <h3>📊 Structure Data Summary</h3>
+                  <p><strong>Protein Length:</strong> ${results.structure3D.length} amino acids</p>
+                  <p><strong>Confidence:</strong> ${(results.structure3D.confidence * 100).toFixed(1)}%</p>
+                  <p><strong>Method:</strong> ${results.structure3D.method}</p>
+                  <div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <h4>Secondary Structure</h4>
+                    <p>α-Helix: ${results.structure3D.secondaryStructure?.alphaHelix?.toFixed(1) || 'N/A'}%</p>
+                    <p>β-Sheet: ${results.structure3D.secondaryStructure?.betaSheet?.toFixed(1) || 'N/A'}%</p>
+                    <p>Loops: ${results.structure3D.secondaryStructure?.loop?.toFixed(1) || 'N/A'}%</p>
+                  </div>
+                  <p style="font-size: 12px; color: #ccc;">
+                    3D visualization unavailable. Download PDB file below to view in external software.
+                  </p>
+                </div>
+              \`;
             }
 
             // Reset camera view
             function resetView() {
-              if (viewer) {
+              if (!viewerInitialized || !viewer) {
+                alert('3D viewer not initialized. Please retry initialization.');
+                return;
+              }
+              try {
                 viewer.zoomTo();
                 viewer.render();
+              } catch (error) {
+                console.error('Reset view error:', error);
               }
             }
 
             // Toggle visualization style
             function toggleStyle(style) {
-              if (!viewer) return;
-
-              viewer.removeAllModels();
-              const pdbData = document.getElementById('pdbData').textContent;
-              viewer.addModel(pdbData, 'pdb');
-
-              switch(style) {
-                case 'cartoon':
-                  viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
-                  break;
-                case 'sphere':
-                  viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 0.5}});
-                  break;
-                case 'stick':
-                  viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.2}});
-                  break;
+              if (!viewerInitialized || !viewer) {
+                alert('3D viewer not initialized. Please retry initialization.');
+                return;
               }
-              viewer.zoomTo();
-              viewer.render();
+
+              try {
+                viewer.removeAllModels();
+                const pdbData = document.getElementById('pdbData').textContent;
+                viewer.addModel(pdbData, 'pdb');
+
+                switch(style) {
+                  case 'cartoon':
+                    viewer.setStyle({}, {cartoon: {color: 'spectrum', thickness: 0.5}});
+                    break;
+                  case 'sphere':
+                    viewer.setStyle({}, {sphere: {color: 'spectrum', radius: 0.8}});
+                    break;
+                  case 'stick':
+                    viewer.setStyle({}, {stick: {color: 'spectrum', radius: 0.3}});
+                    break;
+                }
+                viewer.zoomTo();
+                viewer.render();
+              } catch (error) {
+                console.error('Style toggle error:', error);
+                showError('Failed to change visualization style');
+              }
             }
 
             // Toggle spinning animation
@@ -349,8 +439,26 @@ ${sequence}`
 
             // Initialize viewer when page loads
             window.onload = function() {
-              // Wait for 3DMol to load
-              setTimeout(initViewer, 500);
+              // Check if jQuery and 3DMol are loaded
+              let attempts = 0;
+              const maxAttempts = 10;
+
+              function checkLibraries() {
+                attempts++;
+
+                if (typeof $ !== 'undefined' && typeof $3Dmol !== 'undefined') {
+                  console.log('Libraries loaded successfully');
+                  initViewer();
+                } else if (attempts < maxAttempts) {
+                  console.log('Waiting for libraries to load... attempt', attempts);
+                  setTimeout(checkLibraries, 500);
+                } else {
+                  console.error('Failed to load required libraries');
+                  showError('Failed to load 3D visualization libraries. Please refresh the page.');
+                }
+              }
+
+              checkLibraries();
             };
           </script>
         </body>

@@ -15,7 +15,7 @@ import { CalendarIcon, Download, FileText, BarChart3, Users, Activity, TrendingU
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { api } from '@/lib/api'
+import { reportsAPI, mockData } from '@/lib/api'
 
 interface ReportData {
   id: string
@@ -52,10 +52,8 @@ export default function ReportsPage() {
   const loadReports = async () => {
     try {
       setIsLoading(true)
-      const response = await api.getReports()
-      if (response.success) {
-        setReports(response.data || [])
-      }
+      const response = await reportsAPI.getReports()
+      setReports(response || mockData.reports)
     } catch (error) {
       console.error('Failed to load reports:', error)
       toast.error('Failed to load reports')
@@ -87,7 +85,7 @@ export default function ReportsPage() {
         }
       }
 
-      const response = await api.generateReport(reportData)
+      const response = await reportsAPI.generateReport(reportData.analysisId || '1')
       
       if (response.success) {
         toast.success('Report generation started successfully')
@@ -109,7 +107,7 @@ export default function ReportsPage() {
 
   const handleDownloadReport = async (reportId: string, reportName: string) => {
     try {
-      await api.downloadReport(reportId, reportName)
+      await reportsAPI.exportReport(reportId, 'pdf')
       toast.success('Report downloaded successfully')
     } catch (error) {
       console.error('Download failed:', error)
