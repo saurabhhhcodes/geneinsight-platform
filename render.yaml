@@ -31,7 +31,7 @@ services:
         fromService:
           type: web
           name: geneinsight-ml
-          property: hostWithProtocol
+          property: host
       - key: MAIL_USERNAME
         value: noreply@geneinsight.com
       - key: MAIL_PASSWORD
@@ -50,4 +50,4 @@ services:
         fromService:
           type: web
           name: geneinsight-backend
-          property: hostWithProtocol
+          property: host

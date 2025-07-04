@@ -70,7 +70,7 @@ server:
 # ML Service Configuration
 ml:
   service:
-    url: ${ML_SERVICE_URL:http://ml-service:5000}
+    url: ${ML_SERVICE_URL:http://localhost:5000}
     timeout: 30000
 
 # Application Configuration
