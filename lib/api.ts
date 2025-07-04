@@ -3,9 +3,11 @@
 // Use relative URLs for Next.js API routes (no external backend needed)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
-// Generic API request function with better error handling
+// Generic API request function with comprehensive error handling
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
+
+  console.log(`Making API request to: ${url}`);
 
   const defaultOptions: RequestInit = {
     headers: {
@@ -18,11 +20,16 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
   try {
     const response = await fetch(url, defaultOptions);
 
+    console.log(`API Response status: ${response.status} for ${url}`);
+
     if (!response.ok) {
+      console.error(`API request failed: ${response.status} ${response.statusText} for ${url}`);
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log('API Response:', data);
+    return data;
   } catch (error) {
     console.error(`API request to ${url} failed:`, error);
     throw error;
