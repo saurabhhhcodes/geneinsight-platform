@@ -13,6 +13,8 @@
 
 GeneInsight Platform is a comprehensive bioinformatics application that combines cutting-edge machine learning with modern web technologies to provide powerful gene analysis and disease prediction capabilities. The platform offers DNA sequence analysis, 3D protein structure generation, and interactive visualizations for researchers and healthcare professionals.
 
+🚀 **Live Demo**: Deployed on Vercel with full frontend functionality!
+
 ## ✨ Key Features
 
 ### 🔬 **Scientific Capabilities**
