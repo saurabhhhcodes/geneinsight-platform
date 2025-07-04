@@ -53,10 +53,22 @@ export default function ReportsPage() {
     try {
       setIsLoading(true)
       const response = await reportsAPI.getReports()
-      setReports(response || mockData.reports)
+
+      // Ensure we always have an array
+      let reportsData = []
+      if (response && response.data && Array.isArray(response.data)) {
+        reportsData = response.data
+      } else if (Array.isArray(response)) {
+        reportsData = response
+      } else {
+        reportsData = mockData.reports || []
+      }
+
+      setReports(reportsData)
     } catch (error) {
       console.error('Failed to load reports:', error)
       toast.error('Failed to load reports')
+      setReports(mockData.reports || [])
     } finally {
       setIsLoading(false)
     }

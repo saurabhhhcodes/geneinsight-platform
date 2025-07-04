@@ -18,19 +18,9 @@ const nextConfig = {
   // Optimize for production
   compress: true,
 
-  // Handle API routes
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/:path*`,
-      },
-    ];
-  },
-
-  // Environment variables
+  // Environment variables - use relative URLs for self-contained Next.js app
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '/api',
   },
 
   // Server external packages
