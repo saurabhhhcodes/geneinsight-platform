@@ -1,26 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import formidable from 'formidable';
-import fs from 'fs';
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-};
 
 // Sequence validation for DNA, RNA, and Protein
 function validateSequence(sequence: string): { isValid: boolean; type: string } {
   const cleanSeq = sequence.replace(/\s/g, '').toUpperCase();
-
+  
   // DNA pattern (A, T, C, G)
   const dnaPattern = /^[ATCG]+$/;
   // RNA pattern (A, U, C, G)
   const rnaPattern = /^[AUCG]+$/;
   // Protein pattern (20 standard amino acids + X for unknown)
   const proteinPattern = /^[ACDEFGHIKLMNPQRSTVWYUX]+$/;
-
+  
   if (dnaPattern.test(cleanSeq)) {
     return { isValid: true, type: 'DNA' };
   } else if (rnaPattern.test(cleanSeq)) {
@@ -36,17 +26,17 @@ function validateSequence(sequence: string): { isValid: boolean; type: string } 
 function analyzeRNASequence(sequence: string) {
   const cleanSequence = sequence.replace(/\s/g, '').toUpperCase();
   const length = cleanSequence.length;
-
+  
   // Calculate accurate GC content for RNA
   const gcContent = (cleanSequence.match(/[GC]/g) || []).length / length * 100;
   const auContent = 100 - gcContent;
-
+  
   // RNA-specific features
   const hasStartCodon = cleanSequence.includes('AUG');
   const hasStopCodons = /UAA|UAG|UGA/.test(cleanSequence);
   const hasPolyA = /A{6,}/.test(cleanSequence);
   const hasShineDalgarno = /AGGAGG/.test(cleanSequence);
-
+  
   // RNA structure prediction (simplified)
   let rnaType = [];
   if (hasStartCodon && hasStopCodons) {
@@ -64,12 +54,12 @@ function analyzeRNASequence(sequence: string) {
   if (rnaType.length === 0) {
     rnaType.push('Non-coding RNA');
   }
-
+  
   // RNA stability prediction
   let stability = 'Moderate';
   if (gcContent > 60) stability = 'High';
   else if (gcContent < 40) stability = 'Low';
-
+  
   return {
     basicAnalysis: {
       id: `rna_analysis_${Date.now()}`,
@@ -99,7 +89,7 @@ function analyzeRNASequence(sequence: string) {
 function analyzeProteinSequence(sequence: string) {
   const cleanSequence = sequence.replace(/\s/g, '').toUpperCase();
   const length = cleanSequence.length;
-
+  
   // Amino acid composition analysis
   const aaComposition: { [key: string]: number } = {};
   const aaProperties = {
@@ -109,12 +99,12 @@ function analyzeProteinSequence(sequence: string) {
     aromatic: ['F', 'W', 'Y'],
     sulfur: ['C', 'M']
   };
-
+  
   // Count amino acids
   for (const aa of cleanSequence) {
     aaComposition[aa] = (aaComposition[aa] || 0) + 1;
   }
-
+  
   // Calculate properties
   let hydrophobic = 0, polar = 0, charged = 0, aromatic = 0, sulfur = 0;
   for (const aa of cleanSequence) {
@@ -124,17 +114,17 @@ function analyzeProteinSequence(sequence: string) {
     if (aaProperties.aromatic.includes(aa)) aromatic++;
     if (aaProperties.sulfur.includes(aa)) sulfur++;
   }
-
+  
   // Protein classification
   let proteinType = [];
   const hydrophobicPercent = (hydrophobic / length) * 100;
   const chargedPercent = (charged / length) * 100;
-
+  
   if (hydrophobicPercent > 40) proteinType.push('Membrane protein candidate');
   if (chargedPercent > 25) proteinType.push('DNA-binding protein candidate');
   if (aromatic > length * 0.1) proteinType.push('Enzyme candidate');
   if (proteinType.length === 0) proteinType.push('Globular protein');
-
+  
   return {
     basicAnalysis: {
       id: `protein_analysis_${Date.now()}`,
@@ -162,26 +152,26 @@ function analyzeProteinSequence(sequence: string) {
 function analyzeDNASequence(sequence: string) {
   const cleanSequence = sequence.replace(/\s/g, '').toUpperCase();
   const length = cleanSequence.length;
-
+  
   // Calculate accurate GC content
   const gcContent = (cleanSequence.match(/[GC]/g) || []).length / length * 100;
-
+  
   // More realistic confidence based on sequence length and quality
   let confidence = 0.85; // Base confidence
   if (length < 100) confidence -= 0.15;
   if (length > 1000) confidence += 0.05;
   if (gcContent < 30 || gcContent > 70) confidence -= 0.1; // Extreme GC content reduces confidence
   confidence = Math.max(0.6, Math.min(0.95, confidence)); // Clamp between 0.6-0.95
-
+  
   // Realistic gene prediction based on sequence characteristics
   let detectedGenes = [];
-
+  
   // Check for actual gene signatures and patterns
   const hasStartCodon = cleanSequence.includes('ATG');
   const hasStopCodons = /TAA|TAG|TGA/.test(cleanSequence);
   const hasTATABox = /TATAAA|TATAWAW/.test(cleanSequence);
   const hasPolyASignal = /AATAAA|ATTAAA/.test(cleanSequence);
-
+  
   // Analyze sequence composition for gene type prediction
   if (hasStartCodon && hasStopCodons) {
     // Likely protein-coding sequence
@@ -202,7 +192,7 @@ function analyzeDNASequence(sequence: string) {
     // Generic classification
     detectedGenes.push('Genomic sequence');
   }
-
+  
   // Add specific gene predictions only if we have strong evidence
   if (length > 500 && hasStartCodon && hasStopCodons) {
     if (gcContent > 55 && length > 1500) {
@@ -211,10 +201,10 @@ function analyzeDNASequence(sequence: string) {
       detectedGenes.push('Oncogene candidate');
     }
   }
-
+  
   // Risk assessment based on sequence characteristics (not specific gene names)
   let riskLevel = 'Low';
-
+  
   // Base risk assessment on sequence features, not specific gene names
   if (detectedGenes.includes('Tumor suppressor gene candidate')) {
     riskLevel = 'Moderate'; // Potential tumor suppressor
@@ -225,23 +215,23 @@ function analyzeDNASequence(sequence: string) {
   } else {
     riskLevel = 'Low'; // Default for other sequences
   }
-
+  
   // Calculate additional realistic metrics
   const atContent = 100 - gcContent;
   const orfCount = Math.floor(cleanSequence.split('ATG').length - 1); // Count start codons
   const stopCodons = (cleanSequence.match(/TAA|TAG|TGA/g) || []).length;
-
+  
   // Find realistic motifs
   const motifs = [];
   if (cleanSequence.includes('TATAAA')) motifs.push('TATA box');
   if (cleanSequence.includes('CCAAT')) motifs.push('CAAT box');
   if (cleanSequence.includes('GGGCGG')) motifs.push('GC box');
   if (cleanSequence.includes('CAGCTG')) motifs.push('AP-1 site');
-
+  
   return {
     basicAnalysis: {
-      id: `analysis_${Date.now()}`,
-      sequence: cleanSequence.substring(0, 100) + (length > 100 ? '...' : ''), // Truncate for display
+      id: `dna_analysis_${Date.now()}`,
+      sequence: cleanSequence.substring(0, 100) + (length > 100 ? '...' : ''),
       length,
       gcContent: Math.round(gcContent * 100) / 100,
       atContent: Math.round(atContent * 100) / 100,
@@ -252,11 +242,11 @@ function analyzeDNASequence(sequence: string) {
       detectedGenes,
       riskLevel,
       predictions: {
-        diseaseRisk: riskLevel === 'High' ? Math.round(Math.random() * 20 + 60) :
-                    riskLevel === 'Moderate' ? Math.round(Math.random() * 30 + 30) :
+        diseaseRisk: riskLevel === 'High' ? Math.round(Math.random() * 20 + 60) : 
+                    riskLevel === 'Moderate' ? Math.round(Math.random() * 30 + 30) : 
                     Math.round(Math.random() * 25 + 5), // Risk based on detected genes
         functionalImpact: confidence > 0.8 ? 'High' : confidence > 0.6 ? 'Moderate' : 'Low',
-        pathogenicity: riskLevel === 'High' ? 'Likely Pathogenic' :
+        pathogenicity: riskLevel === 'High' ? 'Likely Pathogenic' : 
                       riskLevel === 'Moderate' ? 'Uncertain Significance' : 'Likely Benign'
       },
       qualityMetrics: {
@@ -265,7 +255,8 @@ function analyzeDNASequence(sequence: string) {
         complexity: gcContent > 40 && gcContent < 60 ? 'Normal' : 'Biased composition'
       },
       timestamp: new Date().toISOString(),
-      status: 'completed'
+      status: 'completed',
+      sequenceType: 'DNA'
     }
   };
 }
@@ -276,54 +267,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    let sequence = '';
-
-    // Check if request is JSON or FormData
-    const contentType = req.headers['content-type'] || '';
-
-    if (contentType.includes('application/json')) {
-      // Handle JSON request (direct sequence input)
-      const { sequence: inputSequence } = req.body;
-      if (inputSequence) {
-        sequence = inputSequence;
-      }
-    } else {
-      // Handle FormData request (file upload)
-      const form = formidable({
-        maxFileSize: 10 * 1024 * 1024, // 10MB
-      });
-
-      const [fields, files] = await form.parse(req);
-
-      // Handle file upload
-      if (files.file && files.file[0]) {
-        const file = files.file[0];
-        const fileContent = fs.readFileSync(file.filepath, 'utf8');
-
-        // Parse FASTA format
-        if (file.originalFilename?.endsWith('.fasta') || file.originalFilename?.endsWith('.fa')) {
-          const lines = fileContent.split('\n');
-          sequence = lines.filter(line => !line.startsWith('>')).join('');
-        } else {
-          sequence = fileContent;
-        }
-      }
-
-      // Handle direct sequence input from form
-      if (fields.sequence && fields.sequence[0]) {
-        sequence = fields.sequence[0];
-      }
-    }
+    const { sequence } = req.body;
 
     if (!sequence) {
-      return res.status(400).json({ error: 'No DNA sequence provided' });
+      return res.status(400).json({ error: 'Sequence is required' });
     }
 
     // Validate and determine sequence type
     const validation = validateSequence(sequence);
     if (!validation.isValid) {
-      return res.status(400).json({
-        error: 'Invalid sequence. Please enter a valid DNA (A,T,C,G), RNA (A,U,C,G), or Protein (20 amino acids) sequence.'
+      return res.status(400).json({ 
+        error: 'Invalid sequence. Please enter a valid DNA (A,T,C,G), RNA (A,U,C,G), or Protein (20 amino acids) sequence.' 
       });
     }
 
@@ -343,13 +297,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Unable to determine sequence type.' });
     }
 
-    // Return the exact format the frontend expects
     res.status(200).json(analysis);
-
   } catch (error) {
-    res.status(500).json({
-      error: 'Analysis failed',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    console.error('Analysis error:', error);
+    res.status(500).json({ error: 'Internal server error during analysis' });
   }
 }

@@ -67,7 +67,7 @@ export default function AnalyzePage() {
       // Use the correct analysis endpoint with proper error handling
       console.log('Sending sequence for analysis:', sequence.trim());
 
-      const response = await fetch('/api/analysis/upload', {
+      const response = await fetch('/api/analysis/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,22 +107,45 @@ export default function AnalyzePage() {
     try {
       const files = e.target.files;
       if (!files || files.length === 0) return;
-      
+
       setFile(files[0]);
       setStatus('loading');
       setError(null);
       setProgress(0);
-      
-      const response = await apiService.uploadSequenceFile(files[0], files[0].name);
-      
-      if (!response?.data?.sequenceId) {
-        throw new Error('Invalid response from server');
-      }
-      
-      if (response.error) {
-        throw new Error(response.error);
-      }
-      
+
+      // Read file content and set it as sequence for analysis
+      const file = files[0];
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+
+        // Parse different file formats
+        let extractedSequence = '';
+        if (file.name.toLowerCase().endsWith('.fasta') || file.name.toLowerCase().endsWith('.fa')) {
+          // Parse FASTA format
+          const lines = content.split('\n');
+          extractedSequence = lines.filter(line => !line.startsWith('>')).join('').replace(/\s/g, '');
+        } else {
+          // Plain text format
+          extractedSequence = content.replace(/\s/g, '').toUpperCase();
+        }
+
+        setSequence(extractedSequence);
+        setStatus('idle');
+
+        toast({
+          title: 'File Loaded',
+          description: `Sequence loaded successfully (${extractedSequence.length} characters)`,
+        });
+      };
+
+      reader.onerror = () => {
+        throw new Error('Failed to read file');
+      };
+
+      reader.readAsText(file);
+
     } catch (err) {
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Unknown error');
