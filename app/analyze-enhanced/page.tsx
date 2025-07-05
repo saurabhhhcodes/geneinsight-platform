@@ -1104,6 +1104,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
     }
   }
 
+  // Sample sequences for quick testing
   const sampleSequences = [
     {
       name: "BRCA1 Gene Fragment",

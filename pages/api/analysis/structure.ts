@@ -12,36 +12,151 @@ function getThreeLetterCode(singleLetter: string): string {
   return aaMap[singleLetter] || 'UNK';
 }
 
+// Calculate accurate molecular properties
+function calculateMolecularProperties(proteinSequence: string) {
+  // Accurate molecular weights for amino acids (Da)
+  const molecularWeights: { [key: string]: number } = {
+    'A': 89.09, 'R': 174.20, 'N': 132.12, 'D': 133.10, 'C': 121.15,
+    'Q': 146.15, 'E': 147.13, 'G': 75.07, 'H': 155.16, 'I': 131.17,
+    'L': 131.17, 'K': 146.19, 'M': 149.21, 'F': 165.19, 'P': 115.13,
+    'S': 105.09, 'T': 119.12, 'W': 204.23, 'Y': 181.19, 'V': 117.15,
+    'X': 110.00 // Average for unknown
+  };
+
+  // pKa values for ionizable groups
+  const pKaValues: { [key: string]: number[] } = {
+    'D': [3.9], 'E': [4.3], 'H': [6.0], 'C': [8.3], 'Y': [10.1],
+    'K': [10.5], 'R': [12.5]
+  };
+
+  // Hydrophobicity index (Kyte-Doolittle scale)
+  const hydrophobicity: { [key: string]: number } = {
+    'A': 1.8, 'R': -4.5, 'N': -3.5, 'D': -3.5, 'C': 2.5,
+    'Q': -3.5, 'E': -3.5, 'G': -0.4, 'H': -3.2, 'I': 4.5,
+    'L': 3.8, 'K': -3.9, 'M': 1.9, 'F': 2.8, 'P': -1.6,
+    'S': -0.8, 'T': -0.7, 'W': -0.9, 'Y': -1.3, 'V': 4.2,
+    'X': 0.0
+  };
+
+  // Calculate molecular weight
+  let totalMW = 0;
+  for (const aa of proteinSequence) {
+    totalMW += molecularWeights[aa] || 110;
+  }
+  // Subtract water molecules for peptide bonds
+  totalMW -= (proteinSequence.length - 1) * 18.015;
+
+  // Calculate average hydrophobicity
+  let totalHydrophobicity = 0;
+  for (const aa of proteinSequence) {
+    totalHydrophobicity += hydrophobicity[aa] || 0;
+  }
+  const avgHydrophobicity = totalHydrophobicity / proteinSequence.length;
+
+  // Estimate isoelectric point (simplified)
+  let positiveCharges = 0;
+  let negativeCharges = 0;
+  for (const aa of proteinSequence) {
+    if (['K', 'R', 'H'].includes(aa)) positiveCharges++;
+    if (['D', 'E'].includes(aa)) negativeCharges++;
+  }
+
+  // Simplified pI calculation
+  let estimatedPI = 7.0;
+  if (positiveCharges > negativeCharges) {
+    estimatedPI = 7.0 + (positiveCharges - negativeCharges) * 0.5;
+  } else if (negativeCharges > positiveCharges) {
+    estimatedPI = 7.0 - (negativeCharges - positiveCharges) * 0.5;
+  }
+  estimatedPI = Math.max(3.0, Math.min(12.0, estimatedPI));
+
+  return {
+    molecularWeight: Math.round(totalMW * 100) / 100,
+    isoelectricPoint: Math.round(estimatedPI * 100) / 100,
+    hydrophobicity: Math.round(avgHydrophobicity * 1000) / 1000,
+    composition: {
+      positiveCharges,
+      negativeCharges,
+      hydrophobic: proteinSequence.split('').filter(aa => ['A', 'I', 'L', 'M', 'F', 'W', 'Y', 'V'].includes(aa)).length,
+      polar: proteinSequence.split('').filter(aa => ['S', 'T', 'N', 'Q'].includes(aa)).length
+    }
+  };
+}
+
 // Mock protein structure generation
 function generateProteinStructure(dnaSequence: string) {
   const cleanSequence = dnaSequence.replace(/\s/g, '').toUpperCase();
   
-  // Mock translation to amino acids (simplified)
+  // Complete standard genetic code table (all 64 codons)
   const codonTable: { [key: string]: string } = {
-    'TTT': 'F', 'TTC': 'F', 'TTA': 'L', 'TTG': 'L',
-    'TCT': 'S', 'TCC': 'S', 'TCA': 'S', 'TCG': 'S',
-    'TAT': 'Y', 'TAC': 'Y', 'TAA': '*', 'TAG': '*',
-    'TGT': 'C', 'TGC': 'C', 'TGA': '*', 'TGG': 'W',
-    'CTT': 'L', 'CTC': 'L', 'CTA': 'L', 'CTG': 'L',
+    // Phenylalanine
+    'TTT': 'F', 'TTC': 'F',
+    // Leucine
+    'TTA': 'L', 'TTG': 'L', 'CTT': 'L', 'CTC': 'L', 'CTA': 'L', 'CTG': 'L',
+    // Serine
+    'TCT': 'S', 'TCC': 'S', 'TCA': 'S', 'TCG': 'S', 'AGT': 'S', 'AGC': 'S',
+    // Tyrosine
+    'TAT': 'Y', 'TAC': 'Y',
+    // Stop codons
+    'TAA': '*', 'TAG': '*', 'TGA': '*',
+    // Cysteine
+    'TGT': 'C', 'TGC': 'C',
+    // Tryptophan
+    'TGG': 'W',
+    // Proline
     'CCT': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
-    'CAT': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q',
-    'CGT': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
-    'ATT': 'I', 'ATC': 'I', 'ATA': 'I', 'ATG': 'M',
+    // Histidine
+    'CAT': 'H', 'CAC': 'H',
+    // Glutamine
+    'CAA': 'Q', 'CAG': 'Q',
+    // Arginine
+    'CGT': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R', 'AGA': 'R', 'AGG': 'R',
+    // Isoleucine
+    'ATT': 'I', 'ATC': 'I', 'ATA': 'I',
+    // Methionine (Start codon)
+    'ATG': 'M',
+    // Threonine
     'ACT': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',
-    'AAT': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K',
-    'AGT': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',
+    // Asparagine
+    'AAT': 'N', 'AAC': 'N',
+    // Lysine
+    'AAA': 'K', 'AAG': 'K',
+    // Valine
     'GTT': 'V', 'GTC': 'V', 'GTA': 'V', 'GTG': 'V',
+    // Alanine
     'GCT': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
-    'GAT': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E',
+    // Aspartic acid
+    'GAT': 'D', 'GAC': 'D',
+    // Glutamic acid
+    'GAA': 'E', 'GAG': 'E',
+    // Glycine
     'GGT': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G'
   };
 
+  // Find the first start codon (ATG) and translate from there
   let proteinSequence = '';
-  for (let i = 0; i < cleanSequence.length - 2; i += 3) {
+  let startIndex = cleanSequence.indexOf('ATG');
+
+  if (startIndex === -1) {
+    // No start codon found, translate from beginning (for analysis purposes)
+    startIndex = 0;
+  }
+
+  // Translate in the correct reading frame
+  for (let i = startIndex; i < cleanSequence.length - 2; i += 3) {
     const codon = cleanSequence.substring(i, i + 3);
-    const aminoAcid = codonTable[codon] || 'X';
-    if (aminoAcid === '*') break; // Stop codon
-    proteinSequence += aminoAcid;
+    if (codon.length < 3) break; // Incomplete codon
+
+    const aminoAcid = codonTable[codon];
+    if (!aminoAcid) {
+      // Unknown codon, use X for unknown amino acid
+      proteinSequence += 'X';
+    } else if (aminoAcid === '*') {
+      // Stop codon found, end translation
+      break;
+    } else {
+      proteinSequence += aminoAcid;
+    }
   }
 
   // Mock 3D coordinates (simplified alpha helix)
@@ -61,11 +176,35 @@ function generateProteinStructure(dnaSequence: string) {
     });
   }
 
-  // Generate mock secondary structure
+  // Improved secondary structure prediction using Chou-Fasman method principles
   const secondaryStructure = [];
+
+  // Chou-Fasman propensities (simplified)
+  const helixPropensity: { [key: string]: number } = {
+    'A': 1.42, 'E': 1.51, 'L': 1.21, 'M': 1.45, 'Q': 1.11, 'K': 1.16, 'R': 0.98,
+    'H': 1.00, 'V': 1.06, 'I': 1.08, 'Y': 0.69, 'C': 0.70, 'W': 1.08, 'F': 1.13,
+    'T': 0.83, 'S': 0.77, 'N': 0.67, 'D': 1.01, 'G': 0.57, 'P': 0.57, 'X': 1.00
+  };
+
+  const sheetPropensity: { [key: string]: number } = {
+    'V': 1.70, 'I': 1.60, 'Y': 1.47, 'F': 1.38, 'W': 1.37, 'L': 1.30, 'T': 1.19,
+    'C': 1.19, 'A': 0.83, 'R': 0.93, 'G': 0.75, 'D': 0.54, 'K': 0.74, 'S': 0.75,
+    'H': 0.87, 'Q': 1.10, 'E': 0.37, 'N': 0.89, 'P': 0.55, 'M': 1.05, 'X': 1.00
+  };
+
   for (let i = 0; i < proteinSequence.length; i++) {
-    const structures = ['H', 'E', 'C']; // Helix, Sheet, Coil
-    secondaryStructure.push(structures[Math.floor(Math.random() * 3)]);
+    const aa = proteinSequence[i];
+    const helixProp = helixPropensity[aa] || 1.0;
+    const sheetProp = sheetPropensity[aa] || 1.0;
+
+    // Predict secondary structure based on propensities
+    if (helixProp > 1.1 && helixProp > sheetProp) {
+      secondaryStructure.push('H'); // Alpha helix
+    } else if (sheetProp > 1.1 && sheetProp > helixProp) {
+      secondaryStructure.push('E'); // Beta sheet
+    } else {
+      secondaryStructure.push('C'); // Coil/loop
+    }
   }
 
   // Calculate secondary structure percentages
@@ -93,11 +232,7 @@ function generateProteinStructure(dnaSequence: string) {
         betaSheet: total > 0 ? (sheetCount / total) * 100 : 0,
         loop: total > 0 ? (loopCount / total) * 100 : 0
       },
-      molecularProperties: {
-        molecularWeight: proteinSequence.length * 110, // Approximate
-        isoelectricPoint: 6.5 + Math.random() * 2, // Mock pI
-        hydrophobicity: Math.random() * 2 - 1 // Mock hydrophobicity
-      }
+      molecularProperties: calculateMolecularProperties(proteinSequence)
     }
   };
 }

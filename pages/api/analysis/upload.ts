@@ -29,22 +29,58 @@ function analyzeDNASequence(sequence: string) {
   if (gcContent < 30 || gcContent > 70) confidence -= 0.1; // Extreme GC content reduces confidence
   confidence = Math.max(0.6, Math.min(0.95, confidence)); // Clamp between 0.6-0.95
 
-  // More realistic gene predictions based on sequence characteristics
-  const genes = ['BRCA1', 'TP53', 'EGFR', 'KRAS', 'PIK3CA', 'PTEN', 'APC', 'RB1'];
+  // Realistic gene prediction based on sequence characteristics
   let detectedGenes = [];
 
-  // Predict genes based on sequence patterns (simplified)
-  if (cleanSequence.includes('ATG')) { // Start codon present
-    if (gcContent > 50) detectedGenes.push('BRCA1', 'TP53');
-    else detectedGenes.push('KRAS', 'PIK3CA');
-  }
-  if (cleanSequence.includes('TATA')) detectedGenes.push('EGFR');
-  if (detectedGenes.length === 0) detectedGenes = ['Unknown'];
+  // Check for actual gene signatures and patterns
+  const hasStartCodon = cleanSequence.includes('ATG');
+  const hasStopCodons = /TAA|TAG|TGA/.test(cleanSequence);
+  const hasTATABox = /TATAAA|TATAWAW/.test(cleanSequence);
+  const hasPolyASignal = /AATAAA|ATTAAA/.test(cleanSequence);
 
-  // Risk assessment based on detected genes and sequence characteristics
+  // Analyze sequence composition for gene type prediction
+  if (hasStartCodon && hasStopCodons) {
+    // Likely protein-coding sequence
+    if (length > 1000 && gcContent > 55) {
+      detectedGenes.push('Large protein-coding gene');
+    } else if (length > 300 && gcContent > 45) {
+      detectedGenes.push('Protein-coding sequence');
+    } else {
+      detectedGenes.push('Short ORF');
+    }
+  } else if (hasTATABox || hasPolyASignal) {
+    // Regulatory sequences
+    detectedGenes.push('Regulatory region');
+  } else if (gcContent > 60) {
+    // High GC content might indicate promoter region
+    detectedGenes.push('Promoter region');
+  } else {
+    // Generic classification
+    detectedGenes.push('Genomic sequence');
+  }
+
+  // Add specific gene predictions only if we have strong evidence
+  if (length > 500 && hasStartCodon && hasStopCodons) {
+    if (gcContent > 55 && length > 1500) {
+      detectedGenes.push('Tumor suppressor gene candidate');
+    } else if (gcContent < 45 && length > 1000) {
+      detectedGenes.push('Oncogene candidate');
+    }
+  }
+
+  // Risk assessment based on sequence characteristics (not specific gene names)
   let riskLevel = 'Low';
-  if (detectedGenes.includes('BRCA1') || detectedGenes.includes('TP53')) riskLevel = 'High';
-  else if (detectedGenes.includes('KRAS') || detectedGenes.includes('PIK3CA')) riskLevel = 'Moderate';
+
+  // Base risk assessment on sequence features, not specific gene names
+  if (detectedGenes.includes('Tumor suppressor gene candidate')) {
+    riskLevel = 'Moderate'; // Potential tumor suppressor
+  } else if (detectedGenes.includes('Oncogene candidate')) {
+    riskLevel = 'Moderate'; // Potential oncogene
+  } else if (detectedGenes.includes('Protein-coding sequence') && length > 1000) {
+    riskLevel = 'Low-Moderate'; // Large protein-coding sequences need further analysis
+  } else {
+    riskLevel = 'Low'; // Default for other sequences
+  }
 
   // Calculate additional realistic metrics
   const atContent = 100 - gcContent;
