@@ -148,7 +148,7 @@ function generate3DStructure(proteinSequence: string) {
   const pdbLines = []
   let atomId = 1
 
-  // Add PDB header information
+  // Add PDB header information (v2.0 - improved format)
   pdbLines.push('HEADER    PREDICTED PROTEIN STRUCTURE                    01-JAN-24   PRED')
   pdbLines.push('TITLE     AI-PREDICTED PROTEIN STRUCTURE FROM DNA SEQUENCE')
   pdbLines.push('COMPND    MOL_ID: 1;')
