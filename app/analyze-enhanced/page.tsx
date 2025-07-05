@@ -1194,7 +1194,6 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
               <p id="file-upload-help" className="text-sm text-muted-foreground">
                 Supported formats: FASTA (.fasta, .fa), plain text (.txt)
               </p>
-              </div>
 
               {/* 3D Structure Option */}
               <div className="flex items-center space-x-2 p-4 bg-blue-50 rounded-lg">
