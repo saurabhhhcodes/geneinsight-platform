@@ -97,7 +97,12 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
+                aria-describedby="email-help"
               />
+              <p id="email-help" className="text-sm text-muted-foreground">
+                We'll send password reset instructions to this email address.
+              </p>
             </div>
             
             <Button 

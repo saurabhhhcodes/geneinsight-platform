@@ -78,6 +78,7 @@ export default function RegisterPage() {
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   required
+                  autoComplete="given-name"
                 />
               </div>
               <div className="space-y-2">
@@ -88,6 +89,7 @@ export default function RegisterPage() {
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   required
+                  autoComplete="family-name"
                 />
               </div>
             </div>
@@ -101,6 +103,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
+                autoComplete="email"
               />
             </div>
 
@@ -112,6 +115,7 @@ export default function RegisterPage() {
                 value={formData.institution}
                 onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
                 required
+                autoComplete="organization"
               />
             </div>
 
@@ -140,6 +144,8 @@ export default function RegisterPage() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
+                  autoComplete="new-password"
+                  aria-describedby="password-requirements"
                 />
                 <Button
                   type="button"
@@ -147,6 +153,7 @@ export default function RegisterPage() {
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>

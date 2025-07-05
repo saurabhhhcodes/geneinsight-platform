@@ -1140,14 +1140,24 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Textarea
-                placeholder="Enter DNA sequence (ATCG format)..."
-                value={sequence}
-                onChange={(e) => setSequence(e.target.value.toUpperCase())}
-                rows={8}
-                className="font-mono text-sm"
-              />
-              
+              <div>
+                <label htmlFor="dna-sequence-enhanced" className="block text-sm font-medium mb-2">
+                  DNA Sequence
+                </label>
+                <Textarea
+                  id="dna-sequence-enhanced"
+                  placeholder="Enter DNA sequence (ATCG format)..."
+                  value={sequence}
+                  onChange={(e) => setSequence(e.target.value.toUpperCase())}
+                  rows={8}
+                  className="font-mono text-sm"
+                  aria-describedby="sequence-enhanced-help"
+                />
+                <p id="sequence-enhanced-help" className="text-sm text-muted-foreground mt-1">
+                  Enter your DNA sequence using standard nucleotide codes (A, T, G, C).
+                </p>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <input
@@ -1156,6 +1166,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
                     onChange={handleFileUpload}
                     className="hidden"
                     id="file-upload"
+                    aria-describedby="file-upload-help"
                   />
                   <label htmlFor="file-upload">
                     <Button variant="outline" className="cursor-pointer" asChild>
@@ -1166,10 +1177,15 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
                     </Button>
                   </label>
                 </div>
-                
+
                 <div className="text-sm text-gray-500">
                   Length: {sequence.length} bp
                 </div>
+              </div>
+
+              <p id="file-upload-help" className="text-sm text-muted-foreground">
+                Supported formats: FASTA (.fasta, .fa), plain text (.txt)
+              </p>
               </div>
 
               {/* 3D Structure Option */}

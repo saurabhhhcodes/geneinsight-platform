@@ -110,6 +110,7 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
                         id="firstName"
                         value={user.firstName}
                         onChange={(e) => setUser({...user, firstName: e.target.value})}
+                        autoComplete="given-name"
                       />
                     </div>
                     <div>
@@ -118,6 +119,7 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
                         id="lastName"
                         value={user.lastName}
                         onChange={(e) => setUser({...user, lastName: e.target.value})}
+                        autoComplete="family-name"
                       />
                     </div>
                   </div>
@@ -128,14 +130,17 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
                       type="email"
                       value={user.email}
                       onChange={(e) => setUser({...user, email: e.target.value})}
+                      autoComplete="email"
                     />
                   </div>
                   <div>
                     <Label htmlFor="phone">Phone</Label>
                     <Input
                       id="phone"
+                      type="tel"
                       value={user.phone}
                       onChange={(e) => setUser({...user, phone: e.target.value})}
+                      autoComplete="tel"
                     />
                   </div>
                   <div>
@@ -144,6 +149,7 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
                       id="organization"
                       value={user.organization}
                       onChange={(e) => setUser({...user, organization: e.target.value})}
+                      autoComplete="organization"
                     />
                   </div>
                   <div>

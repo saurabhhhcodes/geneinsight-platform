@@ -131,17 +131,37 @@ export default function AnalyzePage() {
       <h1 className="text-2xl font-bold mb-4">Sequence Analysis</h1>
       
       <div className="mb-4">
+        <label htmlFor="dna-sequence" className="block text-sm font-medium mb-2">
+          DNA Sequence
+        </label>
         <textarea
+          id="dna-sequence"
           className="w-full p-2 border rounded"
           value={sequence}
           onChange={(e) => setSequence(e.target.value)}
-          placeholder="Enter DNA sequence"
+          placeholder="Enter DNA sequence (A, T, G, C)"
           rows={5}
+          aria-describedby="sequence-help"
         />
+        <p id="sequence-help" className="text-sm text-gray-600 mt-1">
+          Enter your DNA sequence using standard nucleotide codes (A, T, G, C).
+        </p>
       </div>
-      
+
       <div className="mb-4">
-        <input type="file" onChange={handleFileUpload} />
+        <label htmlFor="sequence-file" className="block text-sm font-medium mb-2">
+          Or upload a sequence file
+        </label>
+        <input
+          id="sequence-file"
+          type="file"
+          onChange={handleFileUpload}
+          accept=".fasta,.fa,.txt,.seq"
+          aria-describedby="file-help"
+        />
+        <p id="file-help" className="text-sm text-gray-600 mt-1">
+          Supported formats: FASTA, TXT, SEQ
+        </p>
       </div>
       
       <button
