@@ -33,7 +33,7 @@ services:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
-      ML_SERVICE_URL: http://ml-service:5000
+      ML_SERVICE_URL: https://least-won-grocery-children.trycloudflare.com
     ports:
       - "8080:8080"
     depends_on:
@@ -64,7 +64,7 @@ services:
       dockerfile: frontend.Dockerfile
     container_name: geneinsight-frontend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_API_URL: https://georgia-detected-pupils-employ.trycloudflare.com
     ports:
       - "3000:3000"
     depends_on:

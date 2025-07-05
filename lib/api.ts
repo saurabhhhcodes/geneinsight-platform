@@ -1,7 +1,7 @@
 // API utility functions for GeneInsight Platform
 
 // Use relative URLs for Next.js API routes (no external backend needed)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_BASE_URL = '/api';
 
 // Generic API request function with comprehensive error handling
 async function apiRequest(endpoint: string, options: RequestInit = {}) {
@@ -221,6 +221,9 @@ export const isDevelopment = process.env.NODE_ENV === 'development';
 export const useMockData = () => {
   return false; // Always use real API now
 };
+
+// Export mockData as named export for easier importing
+export { mockData };
 
 export default {
   authAPI,
