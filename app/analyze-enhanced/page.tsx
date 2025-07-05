@@ -1120,6 +1120,12 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
     }
   ]
 
+  // Function to load sample sequence
+  const loadSampleSequence = (sampleSeq: { name: string; sequence: string }) => {
+    setSequence(sampleSeq.sequence)
+    setError("")
+  }
+
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-8">
