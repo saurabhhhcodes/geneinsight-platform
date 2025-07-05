@@ -1107,16 +1107,29 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
   // Sample sequences for quick testing
   const sampleSequences = [
     {
-      name: "BRCA1 Gene Fragment",
+      name: "BRCA1 Gene Fragment (DNA)",
+      type: "DNA",
       sequence: "ATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAATGTCATTAATGCTATGCAGAAAATCTTAGAGTGTCCCATCTGTCTGGAGTTGATCAAGGAACCTGTCTCCACAAAGTGTGACCACATATTTTGCAAATTTTGCATGCTGAAACTTCTCAACCAGAAGAAAGGGCCTTCACAGTGTCCTTTATGTAAGAATGATATCCCCGCTTGGCCCAGCCCTCCGCTGCTGGACCTGGCTGGTGGCCATGCTTCTTGCCCCTTGGGCCTCCCCCCAGCCTCTGAGCCCAGAAAGCGAAACCGGATCCTTGG"
     },
     {
-      name: "p53 Tumor Suppressor",
-      sequence: "ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCCTCTGAGTCAGGAAACATTTTCAGACCTATGGAAACTACTTCCTGAAAACAACGTTCTGTCCCCCTTGCCGTCCCAAGCAATGGATGATTTGATGCTGTCCCCGGACGATATTGAACAATGGTTCACTGAAGACCCAGGTCCAGATGAAGCTCCCAGAATGCCAGAGGCTGCTCCCCCCGTGGCCCCTGCACCAGCAGCTCCTACACCGGCGGCCCCTGCACCAGCCCCCTCCTGGCCCCTGTCATCTTCT"
+      name: "p53 mRNA Fragment (RNA)",
+      type: "RNA",
+      sequence: "AUGGAGGAGCCGCAGUCAGAUCCUAGCGUCGAGCCCCCCUCUGAGUCAGGAAACAUUUUCAGACCUAUGGAAACUACUUCCUGAAAACAACGUUCUGUCCCCCUUGCCGUCCCAAGCAAUGAUGAUUUGAUGCUGUCCCCGGACGAUAUUGAACAAUGGUCACUGAAGACCCAGGUCCAGAUGAAGCUCCCAGAAUGCCAGAGGCUGCUCCCCCCGUGGCCCCUGCACCAGCAGCUCCUACACCGGCGGCCCCUGCACCAGCCCCCCUCCUGGCCCCUGUCAUCUUCU"
     },
     {
-      name: "Insulin Gene",
-      sequence: "ATGGCCCTGTGGATGCGCCTCCTGCCCCTGCTGGCGCTGCTGGCCCTCTGGGGACCTGACCCAGCCGCAGCCTTTGTGAACCAACACCTGTGCGGCTCACACCTGGTGGAAGCTCTCTACCTAGTGTGCGGGGAACGAGGCTTCTTCTACACACCCAAGACCCGCCGGGAGGCAGAGGACCTGCAGGTGGGGCAGGTGGAGCTGGGCGGGGGCCCTGGTGCAGGCAGCCTGCAGCCCTTGGCCCTGGAGGGGTCCCTGCAGAAGCGTGGCATTGTGGAACAATGCTGTACCAGCATCTGCTCCCTCTACCAGCTGGAGAACTACTGCAAC"
+      name: "Insulin Protein (Protein)",
+      type: "PROTEIN",
+      sequence: "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
+    },
+    {
+      name: "Hemoglobin Alpha Chain (Protein)",
+      type: "PROTEIN",
+      sequence: "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR"
+    },
+    {
+      name: "tRNA-Phe (RNA)",
+      type: "RNA",
+      sequence: "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUCUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"
     }
   ]
 
@@ -1149,12 +1162,12 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label htmlFor="dna-sequence-enhanced" className="block text-sm font-medium mb-2">
-                  DNA Sequence
+                <label htmlFor="sequence-enhanced" className="block text-sm font-medium mb-2">
+                  Biological Sequence
                 </label>
                 <Textarea
-                  id="dna-sequence-enhanced"
-                  placeholder="Enter DNA sequence (ATCG format)..."
+                  id="sequence-enhanced"
+                  placeholder="Enter DNA (ATCG), RNA (AUCG), or Protein (amino acids) sequence..."
                   value={sequence}
                   onChange={(e) => setSequence(e.target.value.toUpperCase())}
                   rows={8}
@@ -1162,7 +1175,10 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
                   aria-describedby="sequence-enhanced-help"
                 />
                 <p id="sequence-enhanced-help" className="text-sm text-muted-foreground mt-1">
-                  Enter your DNA sequence using standard nucleotide codes (A, T, G, C).
+                  <strong>Supported sequence types:</strong><br/>
+                  • <strong>DNA:</strong> A, T, G, C nucleotides<br/>
+                  • <strong>RNA:</strong> A, U, G, C nucleotides<br/>
+                  • <strong>Protein:</strong> 20 standard amino acids (single letter codes)
                 </p>
               </div>
 
@@ -1192,7 +1208,8 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
               </div>
 
               <p id="file-upload-help" className="text-sm text-muted-foreground">
-                Supported formats: FASTA (.fasta, .fa), plain text (.txt)
+                <strong>Supported formats:</strong> FASTA (.fasta, .fa), Plain text (.txt), PDB (.pdb)<br/>
+                <strong>Content:</strong> DNA, RNA, or Protein sequences
               </p>
 
               {/* 3D Structure Option */}

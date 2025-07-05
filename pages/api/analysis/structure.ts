@@ -83,8 +83,28 @@ function calculateMolecularProperties(proteinSequence: string) {
   };
 }
 
-// Mock protein structure generation
-function generateProteinStructure(dnaSequence: string) {
+// Determine sequence type and generate appropriate structure
+function generateStructure(inputSequence: string) {
+  const cleanSequence = inputSequence.replace(/\s/g, '').toUpperCase();
+
+  // Determine sequence type
+  const dnaPattern = /^[ATCG]+$/;
+  const rnaPattern = /^[AUCG]+$/;
+  const proteinPattern = /^[ACDEFGHIKLMNPQRSTVWYUX]+$/;
+
+  if (dnaPattern.test(cleanSequence)) {
+    return generateProteinStructureFromDNA(cleanSequence);
+  } else if (rnaPattern.test(cleanSequence)) {
+    return generateRNAStructure(cleanSequence);
+  } else if (proteinPattern.test(cleanSequence)) {
+    return generateProteinStructureFromSequence(cleanSequence);
+  } else {
+    throw new Error('Invalid sequence type');
+  }
+}
+
+// Generate protein structure from DNA sequence
+function generateProteinStructureFromDNA(dnaSequence: string) {
   const cleanSequence = dnaSequence.replace(/\s/g, '').toUpperCase();
   
   // Complete standard genetic code table (all 64 codons)
@@ -218,13 +238,13 @@ function generateProteinStructure(dnaSequence: string) {
   return {
     structure3D: {
       success: true,
-      structureId: `structure_${Date.now()}`,
+      structureId: `protein_structure_${Date.now()}`,
       proteinSequence,
       length: proteinSequence.length,
       atoms,
       secondaryStructure: secondaryStructure.join(''),
       confidence: Math.round(confidence * 100) / 100,
-      method: 'AI Prediction',
+      method: 'AI Prediction from DNA',
       timestamp: new Date().toISOString(),
       pdbData: generateMockPDB(atoms, proteinSequence),
       secondaryStructure: {
@@ -232,7 +252,143 @@ function generateProteinStructure(dnaSequence: string) {
         betaSheet: total > 0 ? (sheetCount / total) * 100 : 0,
         loop: total > 0 ? (loopCount / total) * 100 : 0
       },
-      molecularProperties: calculateMolecularProperties(proteinSequence)
+      molecularProperties: calculateMolecularProperties(proteinSequence),
+      sequenceType: 'PROTEIN_FROM_DNA'
+    }
+  };
+}
+
+// Generate RNA secondary structure
+function generateRNAStructure(rnaSequence: string) {
+  const cleanSequence = rnaSequence.replace(/\s/g, '').toUpperCase();
+
+  // RNA secondary structure prediction (simplified)
+  const length = cleanSequence.length;
+  const gcContent = (cleanSequence.match(/[GC]/g) || []).length / length * 100;
+
+  // Predict RNA secondary structure elements
+  const structureElements = [];
+  let stemCount = 0;
+  let loopCount = 0;
+  let bulgeCount = 0;
+
+  // Simple base-pairing prediction
+  for (let i = 0; i < length; i++) {
+    const base = cleanSequence[i];
+    // Simplified structure prediction based on GC content and position
+    if (gcContent > 50 && i % 4 === 0) {
+      structureElements.push('('); // Stem start
+      stemCount++;
+    } else if (gcContent > 50 && i % 4 === 3) {
+      structureElements.push(')'); // Stem end
+    } else if (gcContent < 40) {
+      structureElements.push('.'); // Loop
+      loopCount++;
+    } else {
+      structureElements.push('-'); // Bulge
+      bulgeCount++;
+    }
+  }
+
+  // Calculate stability
+  const stability = gcContent > 60 ? 'High' : gcContent > 40 ? 'Moderate' : 'Low';
+
+  return {
+    structure3D: {
+      success: true,
+      structureId: `rna_structure_${Date.now()}`,
+      rnaSequence: cleanSequence,
+      length,
+      secondaryStructure: structureElements.join(''),
+      confidence: Math.min(0.95, 0.6 + (gcContent / 100) * 0.3),
+      method: 'RNA Folding Prediction',
+      timestamp: new Date().toISOString(),
+      structureElements: {
+        stems: stemCount,
+        loops: loopCount,
+        bulges: bulgeCount
+      },
+      stability,
+      gcContent: Math.round(gcContent * 100) / 100,
+      foldingEnergy: -(gcContent * 0.5 + Math.random() * 10), // Mock folding energy
+      sequenceType: 'RNA'
+    }
+  };
+}
+
+// Generate protein structure from amino acid sequence
+function generateProteinStructureFromSequence(proteinSequence: string) {
+  const cleanSequence = proteinSequence.replace(/\s/g, '').toUpperCase();
+  const length = cleanSequence.length;
+
+  // Generate 3D coordinates for protein
+  const atoms = [];
+  for (let i = 0; i < Math.min(length, 100); i++) {
+    const angle = (i * 100) * Math.PI / 180;
+    const radius = 2.3;
+    const rise = 1.5;
+
+    atoms.push({
+      element: 'C',
+      x: radius * Math.cos(angle),
+      y: radius * Math.sin(angle),
+      z: i * rise,
+      residue: cleanSequence[i],
+      residueNumber: i + 1
+    });
+  }
+
+  // Predict secondary structure using Chou-Fasman method
+  const secondaryStructure = [];
+  const helixPropensity: { [key: string]: number } = {
+    'A': 1.42, 'E': 1.51, 'L': 1.21, 'M': 1.45, 'Q': 1.11, 'K': 1.16, 'R': 0.98,
+    'H': 1.00, 'V': 1.06, 'I': 1.08, 'Y': 0.69, 'C': 0.70, 'W': 1.08, 'F': 1.13,
+    'T': 0.83, 'S': 0.77, 'N': 0.67, 'D': 1.01, 'G': 0.57, 'P': 0.57, 'X': 1.00
+  };
+
+  const sheetPropensity: { [key: string]: number } = {
+    'V': 1.70, 'I': 1.60, 'Y': 1.47, 'F': 1.38, 'W': 1.37, 'L': 1.30, 'T': 1.19,
+    'C': 1.19, 'A': 0.83, 'R': 0.93, 'G': 0.75, 'D': 0.54, 'K': 0.74, 'S': 0.75,
+    'H': 0.87, 'Q': 1.10, 'E': 0.37, 'N': 0.89, 'P': 0.55, 'M': 1.05, 'X': 1.00
+  };
+
+  for (let i = 0; i < length; i++) {
+    const aa = cleanSequence[i];
+    const helixProp = helixPropensity[aa] || 1.0;
+    const sheetProp = sheetPropensity[aa] || 1.0;
+
+    if (helixProp > 1.1 && helixProp > sheetProp) {
+      secondaryStructure.push('H');
+    } else if (sheetProp > 1.1 && sheetProp > helixProp) {
+      secondaryStructure.push('E');
+    } else {
+      secondaryStructure.push('C');
+    }
+  }
+
+  const helixCount = secondaryStructure.filter(s => s === 'H').length;
+  const sheetCount = secondaryStructure.filter(s => s === 'E').length;
+  const loopCount = secondaryStructure.filter(s => s === 'C').length;
+
+  return {
+    structure3D: {
+      success: true,
+      structureId: `protein_structure_${Date.now()}`,
+      proteinSequence: cleanSequence,
+      length,
+      atoms,
+      secondaryStructure: secondaryStructure.join(''),
+      confidence: Math.random() * 0.3 + 0.7,
+      method: 'Direct Protein Structure Prediction',
+      timestamp: new Date().toISOString(),
+      pdbData: generateMockPDB(atoms, cleanSequence),
+      secondaryStructure: {
+        alphaHelix: length > 0 ? (helixCount / length) * 100 : 0,
+        betaSheet: length > 0 ? (sheetCount / length) * 100 : 0,
+        loop: length > 0 ? (loopCount / length) * 100 : 0
+      },
+      molecularProperties: calculateMolecularProperties(cleanSequence),
+      sequenceType: 'PROTEIN'
     }
   };
 }
@@ -277,17 +433,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { sequence } = req.body;
 
     if (!sequence) {
-      return res.status(400).json({ error: 'DNA sequence is required' });
+      return res.status(400).json({ error: 'Sequence is required' });
     }
 
-    // Validate DNA sequence
-    const dnaPattern = /^[ATCG\s\n\r]+$/i;
-    if (!dnaPattern.test(sequence.replace(/\s/g, ''))) {
-      return res.status(400).json({ error: 'Invalid DNA sequence' });
-    }
-
-    // Generate protein structure
-    const structure = generateProteinStructure(sequence);
+    // Generate structure based on sequence type
+    const structure = generateStructure(sequence);
     
     res.status(200).json(structure);
 

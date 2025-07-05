@@ -8,13 +8,155 @@ export const config = {
   },
 };
 
-// DNA sequence validation
-function validateDNASequence(sequence: string): boolean {
-  const dnaPattern = /^[ATCG\s\n\r]+$/i;
-  return dnaPattern.test(sequence.replace(/\s/g, ''));
+// Sequence validation for DNA, RNA, and Protein
+function validateSequence(sequence: string): { isValid: boolean; type: string } {
+  const cleanSeq = sequence.replace(/\s/g, '').toUpperCase();
+
+  // DNA pattern (A, T, C, G)
+  const dnaPattern = /^[ATCG]+$/;
+  // RNA pattern (A, U, C, G)
+  const rnaPattern = /^[AUCG]+$/;
+  // Protein pattern (20 standard amino acids + X for unknown)
+  const proteinPattern = /^[ACDEFGHIKLMNPQRSTVWYUX]+$/;
+
+  if (dnaPattern.test(cleanSeq)) {
+    return { isValid: true, type: 'DNA' };
+  } else if (rnaPattern.test(cleanSeq)) {
+    return { isValid: true, type: 'RNA' };
+  } else if (proteinPattern.test(cleanSeq)) {
+    return { isValid: true, type: 'PROTEIN' };
+  } else {
+    return { isValid: false, type: 'UNKNOWN' };
+  }
 }
 
-// Improved ML analysis with more accurate results
+// RNA-specific analysis
+function analyzeRNASequence(sequence: string) {
+  const cleanSequence = sequence.replace(/\s/g, '').toUpperCase();
+  const length = cleanSequence.length;
+
+  // Calculate accurate GC content for RNA
+  const gcContent = (cleanSequence.match(/[GC]/g) || []).length / length * 100;
+  const auContent = 100 - gcContent;
+
+  // RNA-specific features
+  const hasStartCodon = cleanSequence.includes('AUG');
+  const hasStopCodons = /UAA|UAG|UGA/.test(cleanSequence);
+  const hasPolyA = /A{6,}/.test(cleanSequence);
+  const hasShineDalgarno = /AGGAGG/.test(cleanSequence);
+
+  // RNA structure prediction (simplified)
+  let rnaType = [];
+  if (hasStartCodon && hasStopCodons) {
+    rnaType.push('mRNA (messenger RNA)');
+  }
+  if (length < 200 && gcContent > 50) {
+    rnaType.push('tRNA candidate');
+  }
+  if (length > 1000 && gcContent > 60) {
+    rnaType.push('rRNA candidate');
+  }
+  if (length < 100) {
+    rnaType.push('microRNA candidate');
+  }
+  if (rnaType.length === 0) {
+    rnaType.push('Non-coding RNA');
+  }
+
+  // RNA stability prediction
+  let stability = 'Moderate';
+  if (gcContent > 60) stability = 'High';
+  else if (gcContent < 40) stability = 'Low';
+
+  return {
+    basicAnalysis: {
+      id: `rna_analysis_${Date.now()}`,
+      sequence: cleanSequence.substring(0, 100) + (length > 100 ? '...' : ''),
+      length,
+      gcContent: Math.round(gcContent * 100) / 100,
+      auContent: Math.round(auContent * 100) / 100,
+      rnaType,
+      hasStartCodon,
+      hasStopCodons,
+      hasPolyA,
+      hasShineDalgarno,
+      stability,
+      predictions: {
+        codingPotential: hasStartCodon && hasStopCodons ? 'High' : 'Low',
+        structuralStability: stability,
+        expressionLevel: gcContent > 50 ? 'High' : 'Moderate'
+      },
+      timestamp: new Date().toISOString(),
+      status: 'completed',
+      sequenceType: 'RNA'
+    }
+  };
+}
+
+// Protein-specific analysis
+function analyzeProteinSequence(sequence: string) {
+  const cleanSequence = sequence.replace(/\s/g, '').toUpperCase();
+  const length = cleanSequence.length;
+
+  // Amino acid composition analysis
+  const aaComposition: { [key: string]: number } = {};
+  const aaProperties = {
+    hydrophobic: ['A', 'I', 'L', 'M', 'F', 'W', 'Y', 'V'],
+    polar: ['S', 'T', 'N', 'Q'],
+    charged: ['D', 'E', 'K', 'R', 'H'],
+    aromatic: ['F', 'W', 'Y'],
+    sulfur: ['C', 'M']
+  };
+
+  // Count amino acids
+  for (const aa of cleanSequence) {
+    aaComposition[aa] = (aaComposition[aa] || 0) + 1;
+  }
+
+  // Calculate properties
+  let hydrophobic = 0, polar = 0, charged = 0, aromatic = 0, sulfur = 0;
+  for (const aa of cleanSequence) {
+    if (aaProperties.hydrophobic.includes(aa)) hydrophobic++;
+    if (aaProperties.polar.includes(aa)) polar++;
+    if (aaProperties.charged.includes(aa)) charged++;
+    if (aaProperties.aromatic.includes(aa)) aromatic++;
+    if (aaProperties.sulfur.includes(aa)) sulfur++;
+  }
+
+  // Protein classification
+  let proteinType = [];
+  const hydrophobicPercent = (hydrophobic / length) * 100;
+  const chargedPercent = (charged / length) * 100;
+
+  if (hydrophobicPercent > 40) proteinType.push('Membrane protein candidate');
+  if (chargedPercent > 25) proteinType.push('DNA-binding protein candidate');
+  if (aromatic > length * 0.1) proteinType.push('Enzyme candidate');
+  if (proteinType.length === 0) proteinType.push('Globular protein');
+
+  return {
+    basicAnalysis: {
+      id: `protein_analysis_${Date.now()}`,
+      sequence: cleanSequence.substring(0, 100) + (length > 100 ? '...' : ''),
+      length,
+      aminoAcidComposition: aaComposition,
+      hydrophobicPercent: Math.round(hydrophobicPercent * 100) / 100,
+      polarPercent: Math.round((polar / length) * 10000) / 100,
+      chargedPercent: Math.round(chargedPercent * 100) / 100,
+      aromaticPercent: Math.round((aromatic / length) * 10000) / 100,
+      proteinType,
+      predictions: {
+        solubility: hydrophobicPercent < 30 ? 'High' : 'Low',
+        stability: chargedPercent < 20 ? 'High' : 'Moderate',
+        functionalDomain: aromatic > length * 0.1 ? 'Catalytic' : 'Structural'
+      },
+      timestamp: new Date().toISOString(),
+      status: 'completed',
+      sequenceType: 'PROTEIN'
+    }
+  };
+}
+
+// Enhanced DNA analysis with bug fixes
 function analyzeDNASequence(sequence: string) {
   const cleanSequence = sequence.replace(/\s/g, '').toUpperCase();
   const length = cleanSequence.length;
@@ -163,13 +305,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'No DNA sequence provided' });
     }
 
-    // Validate DNA sequence
-    if (!validateDNASequence(sequence)) {
-      return res.status(400).json({ error: 'Invalid DNA sequence. Only A, T, C, G characters are allowed.' });
+    // Validate and determine sequence type
+    const validation = validateSequence(sequence);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        error: 'Invalid sequence. Please enter a valid DNA (A,T,C,G), RNA (A,U,C,G), or Protein (20 amino acids) sequence.'
+      });
     }
 
-    // Analyze sequence
-    const analysis = analyzeDNASequence(sequence);
+    // Analyze sequence based on type
+    let analysis;
+    switch (validation.type) {
+      case 'DNA':
+        analysis = analyzeDNASequence(sequence);
+        break;
+      case 'RNA':
+        analysis = analyzeRNASequence(sequence);
+        break;
+      case 'PROTEIN':
+        analysis = analyzeProteinSequence(sequence);
+        break;
+      default:
+        return res.status(400).json({ error: 'Unable to determine sequence type.' });
+    }
 
     // Return the exact format the frontend expects
     res.status(200).json(analysis);
