@@ -9,7 +9,7 @@ interface AnalysisResultsProps {
   results: any
 }
 
-export default function AnalysisResults({ results }: AnalysisResultsProps) {
+function AnalysisResults({ results }: AnalysisResultsProps) {
   // Remove the console.log to prevent infinite re-rendering
   // console.log('AnalysisResults received:', results);
 
@@ -226,7 +226,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
                     {count}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {nucleotide} ({((count as number / analysis.length) * 100).toFixed(1)}%)
+                    {nucleotide} ({analysis.length > 0 ? ((count as number / analysis.length) * 100).toFixed(1) : '0'}%)
                   </div>
                 </div>
               ))}
@@ -418,3 +418,6 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
     </div>
   )
 }
+
+// Wrap with React.memo to prevent unnecessary re-renders
+export default React.memo(AnalysisResults)
