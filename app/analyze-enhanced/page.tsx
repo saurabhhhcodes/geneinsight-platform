@@ -796,36 +796,9 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
               }
             }
 
-            // Control functions
-            function resetView() {
-              rotationX = 0;
-              rotationY = 0;
-              render();
-            }
+            // Control functions removed - using 3DMol.js functions instead
 
-            function showCartoon() {
-              currentStyle = 'cartoon';
-              render();
-            }
 
-            function showSpheres() {
-              currentStyle = 'sphere';
-              render();
-            }
-
-            function showSticks() {
-              currentStyle = 'stick';
-              render();
-            }
-
-            function toggleAnimation() {
-              isAnimating = !isAnimating;
-              if (isAnimating) {
-                render();
-              } else {
-                cancelAnimationFrame(animationId);
-              }
-            }
 
             // Load PDB file functionality with proper error handling
             function loadPDBFile(event) {
@@ -893,45 +866,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
               reader.readAsText(file);
             }
 
-            // Load external PDB file
-            function loadPDBFile(event) {
-              const file = event.target.files[0];
-              if (!file) return;
 
-              if (!file.name.toLowerCase().endsWith('.pdb')) {
-                alert('Please select a valid PDB file (.pdb extension)');
-                return;
-              }
-
-              const reader = new FileReader();
-              reader.onload = function(e) {
-                try {
-                  const pdbContent = e.target.result;
-
-                  // Clear current model
-                  viewer.removeAllModels();
-
-                  // Add new model
-                  viewer.addModel(pdbContent, 'pdb');
-                  viewer.setStyle({}, {cartoon: {color: 'spectrum'}});
-                  viewer.zoomTo();
-                  viewer.render();
-
-                  // Update PDB data display
-                  document.getElementById('pdbData').textContent = pdbContent;
-
-                  alert('PDB file loaded successfully!');
-                } catch (error) {
-                  alert('Error loading PDB file: ' + error.message);
-                }
-              };
-
-              reader.onerror = function() {
-                alert('Error reading file. Please try again.');
-              };
-
-              reader.readAsText(file);
-            }
 
             function downloadPDB() {
               const pdbData = document.getElementById('pdbData').textContent;
