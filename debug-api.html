@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeneInsight API Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .url-input { width: 100%; padding: 8px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧬 GeneInsight Platform - API Debug Tool</h1>
+    
+    <div class="test-section">
+        <h3>🔧 Configuration</h3>
+        <label>Base URL:</label>
+        <input type="text" id="baseUrl" class="url-input" value="https://geneinsight-platform.vercel.app">
+        <small>Change this to test local (http://localhost:3001) vs production</small>
+    </div>
+
+    <div class="test-section">
+        <h3>🏥 Health Check</h3>
+        <button onclick="testHealth()">Test Health API</button>
+        <div id="healthResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🧬 Analysis API</h3>
+        <button onclick="testAnalysis()">Test Analysis API</button>
+        <div id="analysisResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔐 Authentication API</h3>
+        <button onclick="testAuth()">Test Login API</button>
+        <div id="authResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 All Tests</h3>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <div id="allTestsResult"></div>
+    </div>
+
+    <script>
+        function getBaseUrl() {
+            return document.getElementById('baseUrl').value;
+        }
+
+        function showResult(elementId, status, message, data = null) {
+            const element = document.getElementById(elementId);
+            element.className = `test-section ${status}`;
+            
+            let html = `<strong>${status.toUpperCase()}:</strong> ${message}`;
+            if (data) {
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            element.innerHTML = html;
+        }
+
+        function showLoading(elementId, message) {
+            showResult(elementId, 'loading', message);
+        }
+
+        async function testHealth() {
+            const elementId = 'healthResult';
+            showLoading(elementId, 'Testing health endpoint...');
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(elementId, 'success', `Health check passed (${response.status})`, data);
+                } else {
+                    showResult(elementId, 'error', `Health check failed (${response.status})`, data);
+                }
+            } catch (error) {
+                showResult(elementId, 'error', `Network error: ${error.message}`);
+            }
+        }
+
+        async function testAnalysis() {
+            const elementId = 'analysisResult';
+            showLoading(elementId, 'Testing analysis endpoint...');
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/api/analysis/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sequence: 'ATGCGATCGTAGCTAGC'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(elementId, 'success', `Analysis successful (${response.status})`, data);
+                } else {
+                    showResult(elementId, 'error', `Analysis failed (${response.status})`, data);
+                }
+            } catch (error) {
+                showResult(elementId, 'error', `Network error: ${error.message}`);
+            }
+        }
+
+        async function testAuth() {
+            const elementId = 'authResult';
+            showLoading(elementId, 'Testing authentication endpoint...');
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'demo@geneinsight.com',
+                        password: 'demo123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(elementId, 'success', `Authentication successful (${response.status})`, {
+                        ...data,
+                        token: data.token ? `${data.token.substring(0, 50)}...` : 'No token'
+                    });
+                } else {
+                    showResult(elementId, 'error', `Authentication failed (${response.status})`, data);
+                }
+            } catch (error) {
+                showResult(elementId, 'error', `Network error: ${error.message}`);
+            }
+        }
+
+        async function runAllTests() {
+            const elementId = 'allTestsResult';
+            showLoading(elementId, 'Running all tests...');
+            
+            const results = [];
+            
+            // Test Health
+            try {
+                const healthResponse = await fetch(`${getBaseUrl()}/api/health`);
+                results.push({
+                    test: 'Health',
+                    status: healthResponse.status,
+                    success: healthResponse.ok
+                });
+            } catch (error) {
+                results.push({
+                    test: 'Health',
+                    status: 'Error',
+                    success: false,
+                    error: error.message
+                });
+            }
+            
+            // Test Analysis
+            try {
+                const analysisResponse = await fetch(`${getBaseUrl()}/api/analysis/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sequence: 'ATGCGATCGTAGCTAGC' })
+                });
+                results.push({
+                    test: 'Analysis',
+                    status: analysisResponse.status,
+                    success: analysisResponse.ok
+                });
+            } catch (error) {
+                results.push({
+                    test: 'Analysis',
+                    status: 'Error',
+                    success: false,
+                    error: error.message
+                });
+            }
+            
+            // Test Auth
+            try {
+                const authResponse = await fetch(`${getBaseUrl()}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'demo@geneinsight.com', password: 'demo123' })
+                });
+                results.push({
+                    test: 'Authentication',
+                    status: authResponse.status,
+                    success: authResponse.ok
+                });
+            } catch (error) {
+                results.push({
+                    test: 'Authentication',
+                    status: 'Error',
+                    success: false,
+                    error: error.message
+                });
+            }
+            
+            const allPassed = results.every(r => r.success);
+            const status = allPassed ? 'success' : 'error';
+            const message = allPassed ? 'All tests passed!' : 'Some tests failed';
+            
+            showResult(elementId, status, message, results);
+        }
+
+        // Auto-run health check on page load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>

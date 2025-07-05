@@ -1,36 +1,125 @@
 # 🧬 GeneInsight Platform
 
-**AI-Powered Bioinformatics Platform for Gene-Disease Association Analysis**
+**Comprehensive Bioinformatics Platform with Multiple Deployment Options**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black.svg)](https://vercel.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black.svg)](https://nextjs.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-green.svg)](https://spring.io/projects/spring-boot)
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
 [![3DMol.js](https://img.shields.io/badge/3DMol.js-2.5.1-green.svg)](https://3dmol.csb.pitt.edu/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Good First Issues](https://img.shields.io/github/issues/8packcoder/geneinsight-platform/good%20first%20issue)](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 ## 🌟 Overview
 
-GeneInsight Platform is a modern, open-source bioinformatics application built with Next.js and deployed on Vercel. It provides powerful DNA sequence analysis, 3D protein structure visualization, and interactive molecular modeling capabilities for researchers and healthcare professionals.
+GeneInsight Platform is a comprehensive, open-source bioinformatics application that supports **multiple deployment architectures**. Whether you want a simple serverless deployment or a full-scale enterprise setup, we've got you covered!
 
 **🚀 Live Demo**: [https://geneinsight-platform.vercel.app](https://geneinsight-platform.vercel.app)
 
-> **New Contributors Welcome!** 👋 This project is beginner-friendly. Check out our [Contributing Guide](CONTRIBUTING.md) and [Good First Issues](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) to get started!
+### **🏗️ Architecture Options**
 
-## 🚀 Deployment Options
+#### **Option 1: Serverless (Vercel) - Quick & Simple**
+- **Frontend**: Next.js 15 with built-in API routes
+- **Backend**: Serverless functions on Vercel
+- **Database**: In-memory (perfect for demos)
+- **Best for**: Quick deployment, demos, learning
 
-### **Option 1: Full Serverless (Vercel Only)**
-- **Frontend**: Deployed on Vercel with built-in API routes
-- **Backend**: Next.js API routes handle all functionality
-- **Database**: Serverless (in-memory for demo)
-- **Best for**: Quick deployment, demos, lightweight usage
+#### **Option 2: Full Stack (Docker) - Production Ready**
+- **Frontend**: Next.js 15 with TypeScript
+- **Backend**: Spring Boot 3.2 with Java 17
+- **ML Service**: Python 3.11 with Flask
+- **Database**: MySQL 8.0 with Redis caching
+- **Best for**: Production, advanced features, scalability
 
-### **Option 2: Hybrid (Vercel + Java Backend)**
-- **Frontend**: Deployed on Vercel
-- **Backend**: Java Spring Boot backend for advanced features
-- **Database**: MySQL/PostgreSQL for production data
-- **Best for**: Production use, advanced ML features, scalability
+#### **Option 3: Manual Setup - Development**
+- **Flexible**: Mix and match components
+- **Customizable**: Adapt to your infrastructure
+- **Best for**: Development, custom deployments
+
+> **New Contributors Welcome!** 👋 This project supports all skill levels. Check out our [Contributing Guide](CONTRIBUTING.md) and [Good First Issues](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) to get started!
+
+## 🚀 Quick Start Guide
+
+### **🎯 Choose Your Deployment Method**
+
+#### **🌐 Option 1: Vercel (Serverless) - 5 Minutes Setup**
+Perfect for demos, learning, and quick deployment.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/8packcoder/geneinsight-platform.git
+cd geneinsight-platform
+
+# 2. Install dependencies
+npm install
+
+# 3. Deploy to Vercel
+npm i -g vercel
+vercel --prod
+```
+
+**What you get:**
+- ✅ Next.js frontend with serverless API routes
+- ✅ In-memory data storage (perfect for demos)
+- ✅ Automatic HTTPS and global CDN
+- ✅ Zero configuration deployment
+
+#### **🐳 Option 2: Docker (Full Stack) - One Command Setup**
+Complete production-ready environment with all services.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/8packcoder/geneinsight-platform.git
+cd geneinsight-platform
+
+# 2. Start all services
+docker-compose up -d
+
+# 3. Access the application
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8080
+# ML Service: http://localhost:5000
+# Database: MySQL on port 3306
+```
+
+**What you get:**
+- ✅ Next.js frontend with TypeScript
+- ✅ Spring Boot backend with Java 17
+- ✅ Python ML service with Flask
+- ✅ MySQL database with Redis caching
+- ✅ Nginx reverse proxy
+- ✅ Full production environment
+
+#### **⚙️ Option 3: Manual Setup - Custom Development**
+For developers who want full control and customization.
+
+```bash
+# 1. Clone and setup frontend
+git clone https://github.com/8packcoder/geneinsight-platform.git
+cd geneinsight-platform
+npm install
+npm run dev  # Runs on http://localhost:3000
+
+# 2. Setup Java backend (new terminal)
+mvn clean compile
+mvn spring-boot:run  # Runs on http://localhost:8080
+
+# 3. Setup ML service (new terminal)
+cd ml_service
+pip install -r requirements.txt
+python app.py  # Runs on http://localhost:5000
+
+# 4. Setup database (optional)
+# Install MySQL and create database 'geneinsight'
+```
+
+**What you get:**
+- ✅ Full development environment
+- ✅ Hot reload for all services
+- ✅ Customizable configuration
+- ✅ Perfect for contributing and development
 
 ## ✨ Key Features
 
@@ -53,9 +142,9 @@ GeneInsight Platform is a modern, open-source bioinformatics application built w
 - **Real-time Visualization** - Dynamic 3D molecular rendering
 - **File Upload Support** - Drag-and-drop PDB file uploads
 
-## 🏗️ Architecture
+## 🏗️ Architecture Overview
 
-### **Serverless Next.js Architecture**
+### **🌐 Serverless Architecture (Vercel)**
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Vercel Deployment                        │
@@ -66,6 +155,43 @@ GeneInsight Platform is a modern, open-source bioinformatics application built w
 │  ├── Components: 3D Viewer, Analysis Forms, Charts        │
 │  └── Libraries: 3DMol.js, Chart.js, Tailwind CSS          │
 └─────────────────────────────────────────────────────────────┘
+```
+
+### **🐳 Full Stack Architecture (Docker)**
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │   ML Service   │
+│   (Next.js)     │◄──►│  (Spring Boot)  │◄──►│   (Python)     │
+│   Port: 3000    │    │   Port: 8080    │    │   Port: 5000   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                ┌─────────────────┴─────────────────┐
+                │           Database Layer          │
+                │  ┌─────────────┐ ┌─────────────┐  │
+                │  │   MySQL     │ │    Redis    │  │
+                │  │ Port: 3306  │ │ Port: 6379  │  │
+                │  └─────────────┘ └─────────────┘  │
+                └───────────────────────────────────┘
+```
+
+### **⚙️ Manual Setup Architecture**
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Development   │    │   Development   │    │   Development   │
+│   Frontend      │    │   Backend       │    │   ML Service    │
+│   (npm run dev) │    │ (mvn spring-    │    │ (python app.py) │
+│                 │    │  boot:run)      │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────┴─────────────┐
+                    │     Local Database        │
+                    │   (MySQL/PostgreSQL)      │
+                    └───────────────────────────┘
+```
                                  │
                     ┌─────────────────┐
                     │    Database     │
@@ -156,84 +282,172 @@ npm run dev
 - Maven 3.6+ (for Java backend)
 - MySQL (for database features)
 
-## 📦 Deployment Guide
+## 📦 Detailed Deployment Guides
 
-### **Option 1: Vercel Deployment (Serverless)**
+### **🌐 Vercel Deployment (Serverless)**
 
-#### **1. Clone Repository**
+#### **Prerequisites**
+- Node.js 18+
+- Git
+- Vercel account (free)
+
+#### **Step-by-Step Deployment**
+
+**1. Fork & Clone**
+```bash
+# Fork the repository on GitHub, then:
+git clone https://github.com/YOUR-USERNAME/geneinsight-platform.git
+cd geneinsight-platform
+```
+
+**2. Install Dependencies**
+```bash
+npm install
+```
+
+**3. Test Locally**
+```bash
+npm run dev
+# Visit http://localhost:3000 to test
+```
+
+**4. Deploy to Vercel**
+
+**Option A: Vercel CLI**
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+**Option B: GitHub Integration**
+1. Go to [vercel.com](https://vercel.com)
+2. Sign in with GitHub
+3. Click "New Project"
+4. Import your forked repository
+5. Deploy with default settings
+
+**5. Environment Variables**
+In Vercel Dashboard, add:
+```env
+JWT_SECRET=geneInsightSecretKeyForJWTTokenGeneration2024
+NEXT_PUBLIC_API_URL=https://your-app.vercel.app
+NODE_ENV=production
+```
+
+**6. Custom Domain (Optional)**
+- Add your domain in Vercel Dashboard
+- Update DNS records as instructed
+
+### **🐳 Docker Deployment (Full Stack)**
+
+#### **Prerequisites**
+- Docker Desktop
+- Docker Compose
+- 8GB+ RAM recommended
+
+#### **Step-by-Step Deployment**
+
+**1. Clone Repository**
 ```bash
 git clone https://github.com/8packcoder/geneinsight-platform.git
 cd geneinsight-platform
 ```
 
-#### **2. Install Dependencies**
+**2. Environment Configuration**
 ```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit environment variables
+# Set your database passwords, email credentials, etc.
+```
+
+**3. Start All Services**
+```bash
+# Start in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Check service status
+docker-compose ps
+```
+
+**4. Access Services**
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8080
+- **ML Service**: http://localhost:5000
+- **API Documentation**: http://localhost:8080/swagger-ui.html
+- **Database**: localhost:3306 (MySQL)
+
+**5. Stop Services**
+```bash
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (careful!)
+docker-compose down -v
+```
+
+### **⚙️ Manual Setup (Development)**
+
+#### **Prerequisites**
+- Node.js 18+
+- Java 17+ (for backend)
+- Maven 3.6+ (for backend)
+- Python 3.11+ (for ML service)
+- MySQL 8.0+ (optional)
+- Git
+
+#### **Frontend Setup**
+```bash
+# 1. Clone and install
+git clone https://github.com/8packcoder/geneinsight-platform.git
+cd geneinsight-platform
 npm install
+
+# 2. Start development server
+npm run dev
+# Access: http://localhost:3000
 ```
 
-#### **3. Deploy to Vercel**
+#### **Java Backend Setup**
 ```bash
-# Install Vercel CLI
-npm i -g vercel
+# 1. Verify Java and Maven
+java -version  # Should be 17+
+mvn -version   # Should be 3.6+
 
-# Deploy
-vercel --prod
-```
-
-#### **4. Environment Variables (Vercel Dashboard)**
-```env
-JWT_SECRET=your-jwt-secret-key
-NEXT_PUBLIC_API_URL=https://your-vercel-app.vercel.app
-```
-
-### **Option 2: Hybrid Deployment (Vercel + Java Backend)**
-
-#### **1. Deploy Frontend to Vercel** (same as above)
-
-#### **2. Setup Java Backend Locally**
-```bash
-# Ensure Java 17+ and Maven are installed
-java -version
-mvn -version
-
-# Compile and run backend
+# 2. Compile and run
 mvn clean compile
 mvn spring-boot:run
+# Access: http://localhost:8080
 ```
 
-#### **3. Configure Frontend for Backend**
-Update your Vercel environment variables:
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
-# or your backend deployment URL
-```
-
-## ☕ Java Backend Setup & Usage
-
-### **Backend Architecture**
-The Java Spring Boot backend provides advanced features:
-- **Advanced ML Models**: More sophisticated analysis algorithms
-- **Database Integration**: MySQL/PostgreSQL for persistent data
-- **Batch Processing**: Handle multiple sequences simultaneously
-- **Enterprise Features**: Audit logging, advanced security, rate limiting
-
-### **Backend Setup**
-
-#### **1. Prerequisites**
+#### **ML Service Setup**
 ```bash
-# Install Java 17+
-java -version
+# 1. Navigate to ML service
+cd ml_service
 
-# Install Maven 3.6+
-mvn -version
+# 2. Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install MySQL (optional)
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Start ML service
+python app.py
+# Access: http://localhost:5000
+```
+
+#### **Database Setup (Optional)**
+```bash
+# 1. Install MySQL
 # Download from: https://dev.mysql.com/downloads/mysql/
-```
 
-#### **2. Database Configuration**
-```bash
-# Create MySQL database
+# 2. Create database
 mysql -u root -p
 CREATE DATABASE geneinsight;
 CREATE USER 'geneinsight_user'@'localhost' IDENTIFIED BY 'your_password';
@@ -241,7 +455,81 @@ GRANT ALL PRIVILEGES ON geneinsight.* TO 'geneinsight_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-#### **3. Application Properties**
+## ☕ Java Backend Deep Dive
+
+### **🏗️ Backend Architecture**
+The Spring Boot backend provides enterprise-grade features:
+
+- **🔬 Advanced Analysis**: Sophisticated ML algorithms
+- **💾 Data Persistence**: MySQL/PostgreSQL with JPA
+- **🔐 Security**: JWT authentication, role-based access
+- **📊 Batch Processing**: Handle multiple sequences
+- **📈 Monitoring**: Health checks, metrics, logging
+- **🔄 Real-time**: WebSocket support for live updates
+
+### **📋 Backend API Endpoints**
+
+#### **Analysis Endpoints**
+```bash
+# Analyze DNA sequence
+POST /api/analysis/analyze
+Content-Type: application/json
+{
+  "sequence": "ATGCGATCGTAGCTAGC",
+  "analysisType": "COMPREHENSIVE"
+}
+
+# Upload file for analysis
+POST /api/analysis/upload
+Content-Type: multipart/form-data
+file: [FASTA/PDB file]
+
+# Generate 3D structure
+POST /api/analysis/structure
+Content-Type: application/json
+{
+  "sequence": "MKTVRQERLKSIVRILERSKEPVSGAQLAEELSVSRQVIVQDIAYLRSLGYNIVATPRGYVLAGG"
+}
+
+# Batch analysis
+POST /api/analysis/batch
+Content-Type: application/json
+{
+  "sequences": ["ATGCGATCG", "GCTAGCATG"],
+  "analysisType": "BASIC"
+}
+
+# Get analysis history
+GET /api/analysis/history?page=0&size=10
+```
+
+#### **Authentication Endpoints**
+```bash
+# Login
+POST /api/auth/login
+Content-Type: application/json
+{
+  "email": "researcher@geneinsight.com",
+  "password": "password123"
+}
+
+# Register
+POST /api/auth/register
+Content-Type: application/json
+{
+  "email": "newuser@example.com",
+  "password": "newpassword",
+  "name": "New User"
+}
+
+# Refresh token
+POST /api/auth/refresh
+Authorization: Bearer <token>
+```
+
+### **🔧 Backend Configuration**
+
+#### **Application Properties**
 Create `src/main/resources/application.properties`:
 ```properties
 # Database Configuration
@@ -259,8 +547,16 @@ spring.jpa.show-sql=true
 server.port=8080
 server.servlet.context-path=/api
 
+# Security Configuration
+jwt.secret=geneInsightSecretKeyForJWTTokenGeneration2024
+jwt.expiration=86400000
+
+# ML Service Integration
+ml.service.url=http://localhost:5000
+ml.service.timeout=30000
+
 # CORS Configuration
-cors.allowed-origins=http://localhost:3000,https://your-vercel-app.vercel.app
+cors.allowed-origins=http://localhost:3000,https://geneinsight-platform.vercel.app
 ```
 
 ## 🤝 Community & Support

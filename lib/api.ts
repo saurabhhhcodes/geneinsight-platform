@@ -39,21 +39,21 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
 // Authentication API
 export const authAPI = {
   login: async (credentials: { email: string; password: string }) => {
-    return apiRequest('/api/auth/login', {
+    return apiRequest('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   },
 
   register: async (userData: { email: string; password: string; name: string }) => {
-    return apiRequest('/api/auth/register', {
+    return apiRequest('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   },
 
   verifyOTP: async (data: { email: string; otp: string }) => {
-    return apiRequest('/api/auth/verify-otp', {
+    return apiRequest('/auth/verify-otp', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -62,11 +62,18 @@ export const authAPI = {
 
 // Analysis API
 export const analysisAPI = {
+  analyze: async (sequence: string) => {
+    return apiRequest('/analysis/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ sequence }),
+    });
+  },
+
   uploadFile: async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    
-    return apiRequest('/api/analysis/upload', {
+
+    return apiRequest('/analysis/upload', {
       method: 'POST',
       body: formData,
       headers: {}, // Remove Content-Type to let browser set it for FormData
@@ -74,15 +81,15 @@ export const analysisAPI = {
   },
 
   getAnalysis: async (id: string) => {
-    return apiRequest(`/api/analysis/${id}`);
+    return apiRequest(`/analysis/${id}`);
   },
 
   getAllAnalyses: async () => {
-    return apiRequest('/api/analysis');
+    return apiRequest('/analysis');
   },
 
   generateStructure: async (sequence: string) => {
-    return apiRequest('/api/analysis/structure', {
+    return apiRequest('/analysis/analyze', {
       method: 'POST',
       body: JSON.stringify({ sequence }),
     });

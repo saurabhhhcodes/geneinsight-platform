@@ -1042,7 +1042,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
         })
       }, 500)
 
-      const response = await fetch('/api/analysis/upload', {
+      const response = await fetch('/api/analysis/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1084,7 +1084,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
     setError("")
 
     try {
-      const response = await fetch('/api/analysis/structure', {
+      const response = await fetch('/api/analysis/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1097,10 +1097,15 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
 
       if (response.ok) {
         const data = await response.json()
-        setResults(prev => ({
-          ...prev,
-          structure3D: data.structure3D
-        }))
+        // Extract the 3D structure from the full analysis
+        if (data.success && data.data.structure3D) {
+          setResults(prev => ({
+            ...prev,
+            structure3D: data.data.structure3D
+          }))
+        } else {
+          setError('3D structure generation failed - no structure data returned')
+        }
       } else {
         const errorData = await response.json()
         setError(errorData.error || '3D structure generation failed')

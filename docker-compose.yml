@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: geneinsight-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: geneinsight
+      MYSQL_USER: geneinsight_user
+      MYSQL_PASSWORD: geneinsight_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - geneinsight-network
+
+  # Python ML Service
+  ml-service:
+    build:
+      context: ./ml_service
+      dockerfile: Dockerfile
+    container_name: geneinsight-ml
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ml_models:/app/models/saved
+      - ./ml_service/data:/app/data
+    networks:
+      - geneinsight-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: geneinsight-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/geneinsight
+      SPRING_DATASOURCE_USERNAME: geneinsight_user
+      SPRING_DATASOURCE_PASSWORD: geneinsight_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      ML_SERVICE_URL: http://ml-service:5000
+      JWT_SECRET: geneInsightSecretKeyForJWTTokenGeneration2024
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,https://geneinsight-platform.vercel.app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ml-service:
+        condition: service_started
+    networks:
+      - geneinsight-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Next.js Frontend (for local development)
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    container_name: geneinsight-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_ML_SERVICE_URL: http://localhost:5000
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+      - ml-service
+    networks:
+      - geneinsight-network
+    restart: unless-stopped
+
+  # Redis (for caching and session management)
+  redis:
+    image: redis:7-alpine
+    container_name: geneinsight-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - geneinsight-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Nginx (reverse proxy and load balancer)
+  nginx:
+    image: nginx:alpine
+    container_name: geneinsight-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+      - ml-service
+    networks:
+      - geneinsight-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+  ml_models:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  geneinsight-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
