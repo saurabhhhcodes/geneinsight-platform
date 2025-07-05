@@ -33,6 +33,24 @@ export default function RegisterPage() {
 
     // Simulate registration
     setTimeout(() => {
+      // Save user data to localStorage
+      const userData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        role: "RESEARCHER",
+        avatar: "",
+        lastLogin: new Date().toISOString(),
+        analysisCount: 0,
+        unreadNotifications: 1,
+        institution: formData.institution,
+        joinDate: new Date().toISOString()
+      }
+
+      // Save to localStorage
+      localStorage.setItem('user', JSON.stringify(userData))
+      localStorage.setItem('token', 'demo-jwt-token-' + Date.now())
+
       setIsLoading(false)
       router.push("/dashboard")
     }, 2000)

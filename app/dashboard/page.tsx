@@ -106,32 +106,56 @@ export default function DashboardPage() {
 
   // Get display name
   const getDisplayName = () => {
-    if (user.firstName && user.lastName) {
+    // Check if user is actually logged in
+    const token = localStorage.getItem('token')
+    if (!token) {
+      return "Researcher"
+    }
+
+    if (user.firstName && user.lastName && user.firstName !== "User") {
       return `${user.firstName} ${user.lastName}`
-    } else if (user.firstName) {
+    } else if (user.firstName && user.firstName !== "User") {
       return user.firstName
-    } else {
+    } else if (user.email && user.email !== "user@example.com") {
       return user.email.split('@')[0]
+    } else {
+      return "Researcher"
     }
   }
 
   // Get user initials for avatar
   const getUserInitials = () => {
-    if (user.firstName && user.lastName) {
+    // Check if user is actually logged in
+    const token = localStorage.getItem('token')
+    if (!token) {
+      return "R" // R for Researcher
+    }
+
+    if (user.firstName && user.lastName && user.firstName !== "User") {
       return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
-    } else if (user.firstName) {
+    } else if (user.firstName && user.firstName !== "User") {
       return user.firstName.charAt(0) + (user.firstName.charAt(1) || '')
+    } else if (user.email && user.email !== "user@example.com") {
+      return user.email.charAt(0).toUpperCase()
     } else {
-      return "U"
+      return "R" // R for Researcher
     }
   }
 
   // Get greeting name
   const getGreetingName = () => {
-    if (user.firstName) {
+    // Check if user is actually logged in (has a valid token)
+    const token = localStorage.getItem('token')
+    if (!token) {
+      return "Researcher"
+    }
+
+    if (user.firstName && user.firstName !== "User") {
       return user.firstName
-    } else {
+    } else if (user.email && user.email !== "user@example.com") {
       return user.email.split('@')[0]
+    } else {
+      return "Researcher"
     }
   }
   const [recentAnalyses] = useState([

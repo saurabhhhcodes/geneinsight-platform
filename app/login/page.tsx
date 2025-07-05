@@ -41,6 +41,25 @@ export default function LoginPage() {
 
       // For demo purposes, accept any valid email/password combination
       console.log('Login successful for:', email)
+
+      // Save user data to localStorage
+      const userData = {
+        firstName: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+        lastName: "",
+        email: email,
+        role: "RESEARCHER",
+        avatar: "",
+        lastLogin: new Date().toISOString(),
+        analysisCount: Math.floor(Math.random() * 100) + 50,
+        unreadNotifications: Math.floor(Math.random() * 5) + 1,
+        institution: "",
+        joinDate: new Date().toISOString()
+      }
+
+      // Save to localStorage
+      localStorage.setItem('user', JSON.stringify(userData))
+      localStorage.setItem('token', 'demo-jwt-token-' + Date.now())
+
       router.push("/dashboard")
 
     } catch (err) {

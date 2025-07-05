@@ -108,13 +108,19 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
   }
 
   const markAsRead = (id: string) => {
-    setNotifications(notifications.map(n => 
+    const updated = notifications.map(n =>
       n.id === id ? { ...n, read: true } : n
-    ))
+    )
+    setNotifications(updated)
+    // Save to localStorage to persist the change
+    localStorage.setItem('notifications', JSON.stringify(updated))
   }
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })))
+    const updated = notifications.map(n => ({ ...n, read: true }))
+    setNotifications(updated)
+    // Save to localStorage to persist the change
+    localStorage.setItem('notifications', JSON.stringify(updated))
   }
 
   const deleteNotification = (id: string) => {

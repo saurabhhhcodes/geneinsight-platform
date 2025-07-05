@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable standalone output for Docker
-  output: 'standalone',
+  // Remove standalone output for Vercel deployment to fix edge runtime warning
+  // output: 'standalone',
 
   transpilePackages: ['lucide-react'],
   eslint: {
