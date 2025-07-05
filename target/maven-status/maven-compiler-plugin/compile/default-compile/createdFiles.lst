@@ -1,7 +1,0 @@
-com\geneinsight\security\JwtTokenProvider.class
-com\geneinsight\GeneInsightApplication.class
-com\geneinsight\security\JwtAuthenticationFilter.class
-com\geneinsight\config\SwaggerConfig.class
-com\geneinsight\config\WebSocketConfig.class
-com\geneinsight\security\JwtAuthenticationEntryPoint.class
-com\geneinsight\config\SecurityConfig.class

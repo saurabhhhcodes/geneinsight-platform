@@ -1,0 +1,99 @@
+MIT License
+
+Copyright (c) 2024 GeneInsight Platform Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Third-Party Licenses
+
+This project includes or depends on the following third-party software:
+
+### 3DMol.js
+- License: BSD-3-Clause
+- Copyright: 3Dmol.js contributors
+- URL: https://github.com/3dmol/3Dmol.js
+
+### Next.js
+- License: MIT
+- Copyright: Vercel, Inc.
+- URL: https://github.com/vercel/next.js
+
+### React
+- License: MIT
+- Copyright: Meta Platforms, Inc. and affiliates
+- URL: https://github.com/facebook/react
+
+### Tailwind CSS
+- License: MIT
+- Copyright: Tailwind Labs, Inc.
+- URL: https://github.com/tailwindlabs/tailwindcss
+
+### TypeScript
+- License: Apache-2.0
+- Copyright: Microsoft Corporation
+- URL: https://github.com/microsoft/TypeScript
+
+### Radix UI
+- License: MIT
+- Copyright: WorkOS
+- URL: https://github.com/radix-ui/primitives
+
+### Chart.js
+- License: MIT
+- Copyright: Chart.js contributors
+- URL: https://github.com/chartjs/Chart.js
+
+### Lucide React
+- License: ISC
+- Copyright: Lucide contributors
+- URL: https://github.com/lucide-icons/lucide
+
+---
+
+## Attribution Requirements
+
+When using this software, please include:
+
+1. **Copyright Notice**: Include the above copyright notice in all copies
+2. **License Text**: Include this license text in all copies
+3. **Attribution**: Credit "GeneInsight Platform" in your documentation
+4. **Third-Party Credits**: Acknowledge the third-party libraries listed above
+
+## Commercial Use
+
+This software is free for commercial use under the MIT License. You may:
+- Use it in commercial products
+- Modify it for commercial purposes
+- Distribute it commercially
+- Sell products that include this software
+
+## Contributions
+
+By contributing to this project, you agree that your contributions will be 
+licensed under the same MIT License that covers the project.
+
+## Disclaimer
+
+This software is provided for educational and research purposes. While we 
+strive for accuracy, the results should not be used for clinical diagnosis 
+or treatment without proper validation and professional oversight.
+
+For questions about licensing, please contact the project maintainers.
