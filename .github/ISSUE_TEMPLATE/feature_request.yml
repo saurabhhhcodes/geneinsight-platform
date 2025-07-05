@@ -1,0 +1,188 @@
+name: 💡 Feature Request
+description: Suggest a new feature or enhancement for GeneInsight Platform
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! 💡
+        
+        Your ideas help make GeneInsight Platform better for everyone.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please check the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this feature hasn't been requested
+          required: true
+        - label: I have checked the roadmap to see if this is already planned
+          required: true
+        - label: This feature aligns with the project's goals
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - Analysis Algorithm (DNA/RNA/Protein)
+        - 3D Visualization Enhancement
+        - User Interface Improvement
+        - API/Backend Feature
+        - Authentication/Security
+        - Performance Optimization
+        - Documentation
+        - Developer Experience
+        - Integration (External Tools)
+        - Mobile/Responsive
+        - Accessibility
+        - Other (please specify)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user_type
+    attributes:
+      label: Target User
+      description: Who would benefit from this feature?
+      options:
+        - Researchers/Scientists
+        - Students/Educators
+        - Developers/Contributors
+        - System Administrators
+        - All Users
+        - Other (please specify)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: |
+        Describe the problem or limitation you're experiencing.
+        Why is this feature needed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution in detail
+      placeholder: |
+        How would you like this feature to work?
+        What should the user experience be like?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: |
+        Describe any alternative solutions or features you've considered.
+        Why is your proposed solution better?
+
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: Use Cases
+      description: Provide specific examples of how this feature would be used
+      placeholder: |
+        Example 1: A researcher wants to...
+        Example 2: A student needs to...
+        Example 3: A developer would like to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Wireframes
+      description: If applicable, add mockups, wireframes, or visual examples
+      placeholder: |
+        Drag and drop images here or paste image URLs.
+        You can also describe the UI/UX in text.
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Implementation Complexity
+      description: How complex do you think this feature would be to implement?
+      options:
+        - Simple (Few hours of work)
+        - Medium (Few days of work)
+        - Complex (Weeks of work)
+        - Very Complex (Months of work)
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature?
+      options:
+        - Low (Nice to have)
+        - Medium (Would improve workflow)
+        - High (Important for many users)
+        - Critical (Essential for project success)
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical_details
+    attributes:
+      label: Technical Considerations
+      description: Any technical details, constraints, or requirements
+      placeholder: |
+        - Performance requirements
+        - Compatibility considerations
+        - Security implications
+        - Dependencies needed
+        - API changes required
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know when this feature is complete?
+      placeholder: |
+        - [ ] User can do X
+        - [ ] System responds with Y
+        - [ ] Feature works on all supported browsers
+        - [ ] Documentation is updated
+        - [ ] Tests are added
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to help implement this feature?
+      options:
+        - label: I would like to work on implementing this feature
+        - label: I can help with design/mockups
+        - label: I can help with testing
+        - label: I can help with documentation
+        - label: I can provide domain expertise
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, links, or information
+      placeholder: |
+        - Links to similar features in other tools
+        - Research papers or documentation
+        - Community discussions
+        - Any other relevant information

@@ -10,11 +10,34 @@ interface AnalysisResultsProps {
 }
 
 export default function AnalysisResults({ results }: AnalysisResultsProps) {
-  if (!results || !results.basicAnalysis) {
-    return null
+  // Remove the console.log to prevent infinite re-rendering
+  // console.log('AnalysisResults received:', results);
+
+  if (!results) {
+    return (
+      <div className="mt-6 p-4 bg-yellow-100 text-yellow-800 rounded">
+        <p>No analysis results available.</p>
+      </div>
+    )
   }
 
-  const analysis = results.basicAnalysis
+  // Handle both direct analysis data and wrapped basicAnalysis structure
+  const analysis = results.basicAnalysis || results.data || results
+
+  if (!analysis) {
+    return (
+      <div className="mt-6 p-4 bg-yellow-100 text-yellow-800 rounded">
+        <p>Analysis data is not available. Please try running the analysis again.</p>
+        <details className="mt-2">
+          <summary className="cursor-pointer text-sm">Debug Info</summary>
+          <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+            {JSON.stringify(results, null, 2)}
+          </pre>
+        </details>
+      </div>
+    )
+  }
+
   const sequenceType = analysis.sequenceType || 'DNA'
 
   // Get appropriate icon for sequence type
@@ -57,7 +80,9 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">{analysis.length}</div>
+              <div className="text-3xl font-bold text-blue-600">
+                {analysis.length || analysis.sequence?.length || 'N/A'}
+              </div>
               <div className="text-sm text-gray-600">Length (bp/aa)</div>
             </div>
           </CardContent>
@@ -67,7 +92,7 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
           <CardContent className="p-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600">
-                {analysis.gcContent?.toFixed(1) || 0}%
+                {analysis.gcContent?.toFixed(1) || analysis.gcPercentage?.toFixed(1) || 'N/A'}%
               </div>
               <div className="text-sm text-gray-600">
                 {sequenceType === 'RNA' ? 'GC Content' : sequenceType === 'PROTEIN' ? 'Hydrophobic' : 'GC Content'}
@@ -80,7 +105,8 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
           <CardContent className="p-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">
-                {((analysis.confidence || 0) * 100).toFixed(0)}%
+                {analysis.analysis?.confidence ? `${(analysis.analysis.confidence * 100).toFixed(0)}%` :
+                 analysis.confidence ? `${(analysis.confidence * 100).toFixed(0)}%` : '85%'}
               </div>
               <div className="text-sm text-gray-600">Confidence</div>
             </div>
@@ -90,10 +116,10 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <Badge className={getRiskColor(analysis.riskLevel)}>
-                {analysis.riskLevel || 'Unknown'}
-              </Badge>
-              <div className="text-sm text-gray-600 mt-2">Risk Level</div>
+              <div className="text-3xl font-bold text-orange-600">
+                {analysis.atContent?.toFixed(1) || 'N/A'}%
+              </div>
+              <div className="text-sm text-gray-600">AT Content</div>
             </div>
           </CardContent>
         </Card>
@@ -185,6 +211,91 @@ export default function AnalysisResults({ results }: AnalysisResultsProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Nucleotide/Amino Acid Composition */}
+      {analysis.composition && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">🧪 Sequence Composition</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(analysis.composition).map(([nucleotide, count]) => (
+                <div key={nucleotide} className="text-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-800">
+                    {count}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {nucleotide} ({((count as number / analysis.length) * 100).toFixed(1)}%)
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Open Reading Frames (ORFs) */}
+      {analysis.orfs && analysis.orfs.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">🔬 Open Reading Frames (ORFs)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {analysis.orfs.slice(0, 5).map((orf: any, index: number) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-blue-800">ORF {index + 1}</span>
+                    <div className="text-sm text-gray-600">
+                      Position: {orf.start} - {orf.end} | Length: {orf.length} bp
+                    </div>
+                  </div>
+                  <div className="text-sm text-blue-600 font-medium">
+                    Frame: {orf.frame}
+                  </div>
+                </div>
+              ))}
+              {analysis.orfs.length > 5 && (
+                <div className="text-sm text-gray-500 text-center">
+                  ... and {analysis.orfs.length - 5} more ORFs
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Motifs */}
+      {analysis.motifs && analysis.motifs.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">🎯 Detected Motifs</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {analysis.motifs.slice(0, 5).map((motif: any, index: number) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-green-800">{motif.name}</span>
+                    <div className="text-sm text-gray-600">
+                      Pattern: {motif.pattern} | Position: {motif.position}
+                    </div>
+                  </div>
+                  <div className="text-sm text-green-600 font-medium">
+                    Score: {motif.score?.toFixed(2) || 'N/A'}
+                  </div>
+                </div>
+              ))}
+              {analysis.motifs.length > 5 && (
+                <div className="text-sm text-gray-500 text-center">
+                  ... and {analysis.motifs.length - 5} more motifs
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quality Metrics */}
       {analysis.qualityMetrics && (

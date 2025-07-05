@@ -1,0 +1,210 @@
+name: 🌟 Good First Issue
+description: Create a beginner-friendly task for new contributors
+title: "[GOOD FIRST ISSUE] "
+labels: ["good first issue", "help wanted", "beginner-friendly"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Creating a Good First Issue for new contributors! 🌟
+        
+        This template helps create beginner-friendly tasks that welcome new contributors to the project.
+
+  - type: dropdown
+    id: skill_level
+    attributes:
+      label: Required Skill Level
+      description: What skills are needed for this task?
+      options:
+        - Beginner (No prior experience needed)
+        - Beginner+ (Basic programming knowledge)
+        - Intermediate (Some experience with the tech stack)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Task Category
+      description: What type of task is this?
+      options:
+        - Documentation
+        - UI/UX Improvement
+        - Bug Fix (Simple)
+        - Code Cleanup
+        - Testing
+        - Translation/Localization
+        - Accessibility
+        - Performance (Simple)
+        - Configuration
+        - Examples/Tutorials
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tech_stack
+    attributes:
+      label: Technology Focus
+      description: Which technologies will the contributor work with?
+      options:
+        - HTML/CSS
+        - JavaScript/TypeScript
+        - React/Next.js
+        - Node.js/API
+        - Java/Spring Boot
+        - Python/Flask
+        - Docker/DevOps
+        - Documentation (Markdown)
+        - Configuration (JSON/YAML)
+        - Multiple Technologies
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Clear, detailed description of what needs to be done
+      placeholder: |
+        Provide a clear, step-by-step description of the task.
+        Make it specific and actionable for beginners.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why_important
+    attributes:
+      label: Why This Matters
+      description: Explain why this task is important for the project
+      placeholder: |
+        Help contributors understand the impact of their work.
+        How does this improve the user experience or developer experience?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Step-by-Step Guide
+      description: Detailed steps to complete this task
+      placeholder: |
+        1. Fork the repository
+        2. Navigate to the file: `path/to/file.js`
+        3. Look for the function `functionName()`
+        4. Add the following code: `...`
+        5. Test your changes by running: `npm run test`
+        6. Submit a pull request
+    validations:
+      required: true
+
+  - type: textarea
+    id: files_to_modify
+    attributes:
+      label: Files to Modify
+      description: List the specific files that need to be changed
+      placeholder: |
+        - `src/components/Button.tsx` - Add new prop
+        - `docs/README.md` - Update installation instructions
+        - `package.json` - Add new script
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know the task is complete?
+      placeholder: |
+        - [ ] Code changes are implemented correctly
+        - [ ] Tests pass (run `npm test`)
+        - [ ] Documentation is updated
+        - [ ] No console errors
+        - [ ] Feature works as expected
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Helpful Resources
+      description: Links and resources to help contributors
+      placeholder: |
+        - [React Documentation](https://react.dev/)
+        - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+        - [Project Contributing Guide](CONTRIBUTING.md)
+        - [Development Setup](DEVELOPMENT.md)
+        - [Similar example in codebase](link-to-example)
+
+  - type: textarea
+    id: testing_instructions
+    attributes:
+      label: Testing Instructions
+      description: How to test the changes
+      placeholder: |
+        1. Run the development server: `npm run dev`
+        2. Navigate to: http://localhost:3000/page
+        3. Verify that: [specific behavior]
+        4. Test edge cases: [list edge cases]
+        5. Run tests: `npm test`
+
+  - type: dropdown
+    id: estimated_time
+    attributes:
+      label: Estimated Time
+      description: How long should this task take?
+      options:
+        - 30 minutes - 1 hour
+        - 1-2 hours
+        - 2-4 hours
+        - 4-8 hours
+        - 1-2 days
+    validations:
+      required: true
+
+  - type: textarea
+    id: mentor_notes
+    attributes:
+      label: Mentor Notes
+      description: Additional guidance for mentors helping with this issue
+      placeholder: |
+        - Key concepts to explain to new contributors
+        - Common pitfalls to watch out for
+        - Code review focus areas
+        - Learning opportunities in this task
+
+  - type: checkboxes
+    id: support_offered
+    attributes:
+      label: Support Available
+      description: What support will be provided to contributors?
+      options:
+        - label: Mentor available for questions
+        - label: Code review and feedback provided
+        - label: Help with setup if needed
+        - label: Guidance on testing
+        - label: Help with Git/GitHub workflow
+
+  - type: textarea
+    id: next_steps
+    attributes:
+      label: Next Steps After Completion
+      description: What can contributors work on next?
+      placeholder: |
+        After completing this task, contributors might be interested in:
+        - Related issue #123
+        - Similar tasks in the same area
+        - More advanced features
+        - Becoming a regular contributor
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other helpful information
+      placeholder: |
+        - Background information
+        - Design decisions
+        - Future plans for this area
+        - Related discussions or issues

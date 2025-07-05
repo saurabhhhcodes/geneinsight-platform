@@ -16,6 +16,21 @@ Fixes #[issue number] (if applicable)
 - [ ] 🔧 Refactoring (no functional changes)
 - [ ] 🧪 Test addition or improvement
 
+### 🧬 Component/Area
+- [ ] 🧬 DNA/RNA/Protein Analysis
+- [ ] 🔬 3D Molecular Visualization
+- [ ] 🔐 Authentication System
+- [ ] 📊 Reports Generation
+- [ ] 📁 File Upload/Import
+- [ ] 🎛️ Dashboard/UI
+- [ ] 🔌 API Endpoints
+- [ ] 📖 Documentation
+- [ ] 🏗️ Build/Deployment
+- [ ] 🐳 Docker Configuration
+- [ ] ☕ Java Backend
+- [ ] 🐍 Python ML Service
+- [ ] 🌐 Frontend (Next.js)
+
 ## 🧪 Testing
 
 ### ✅ Testing Checklist

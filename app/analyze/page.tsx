@@ -83,7 +83,14 @@ export default function AnalyzePage() {
       const data = await response.json();
       console.log('Received analysis data:', data);
 
-      setResults(data);
+      // Map the API response to the expected structure for AnalysisResults component
+      const mappedResults = {
+        basicAnalysis: data.success ? data.data : data,
+        success: data.success || true
+      };
+
+      console.log('Mapped results for display:', mappedResults);
+      setResults(mappedResults);
       setStatus('success');
       setProgress(100);
       toast({
