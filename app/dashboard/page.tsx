@@ -106,10 +106,12 @@ export default function DashboardPage() {
 
   // Get display name
   const getDisplayName = () => {
-    // Check if user is actually logged in
-    const token = localStorage.getItem('token')
-    if (!token) {
-      return "Researcher"
+    // Check if user is actually logged in (only on client side)
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        return "Researcher"
+      }
     }
 
     if (user.firstName && user.lastName && user.firstName !== "User") {
@@ -125,10 +127,12 @@ export default function DashboardPage() {
 
   // Get user initials for avatar
   const getUserInitials = () => {
-    // Check if user is actually logged in
-    const token = localStorage.getItem('token')
-    if (!token) {
-      return "R" // R for Researcher
+    // Check if user is actually logged in (only on client side)
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        return "R" // R for Researcher
+      }
     }
 
     if (user.firstName && user.lastName && user.firstName !== "User") {
@@ -144,10 +148,12 @@ export default function DashboardPage() {
 
   // Get greeting name
   const getGreetingName = () => {
-    // Check if user is actually logged in (has a valid token)
-    const token = localStorage.getItem('token')
-    if (!token) {
-      return "Researcher"
+    // Check if user is actually logged in (has a valid token) - only on client side
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        return "Researcher"
+      }
     }
 
     if (user.firstName && user.firstName !== "User") {
