@@ -89,9 +89,7 @@ export default function AnalyzePage() {
       toast({
         title: 'Analysis Complete',
         description: 'Sequence analysis completed successfully!',
-      }); else {
-        throw new Error('No analysis results received');
-      }
+      });
 
     } catch (err) {
       setStatus('error');
