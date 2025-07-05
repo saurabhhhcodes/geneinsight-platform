@@ -318,7 +318,7 @@ ${sequence}`
                   <h3>📄 PDB Data</h3>
                   <button class="btn" onclick="downloadPDB()">Download PDB</button>
                   <button class="btn" onclick="copyPDB()">Copy PDB</button>
-                  <div class="pdb-data" id="pdbData">${results.structure3D.pdbData}</div>
+                  <div class="pdb-data" id="pdbData">${results.structure3D.pdbData || 'No PDB data available'}</div>
                 </div>
               </div>
             </div>
@@ -369,10 +369,17 @@ ${sequence}`
 
                 console.log('3DMol viewer created successfully');
 
-                // Get PDB data
-                const pdbData = document.getElementById('pdbData').textContent;
-                if (!pdbData || pdbData.trim() === '') {
-                  throw new Error('No PDB data available');
+                // Get PDB data with proper validation
+                const pdbElement = document.getElementById('pdbData');
+                if (!pdbElement) {
+                  throw new Error('PDB data element not found');
+                }
+
+                const pdbData = pdbElement.textContent;
+                if (!pdbData || pdbData.trim() === '' || pdbData === 'undefined' || pdbData.includes('No PDB data available')) {
+                  console.warn('No valid PDB data available, showing placeholder');
+                  showPlaceholder();
+                  return;
                 }
 
                 console.log('Adding PDB model...');
@@ -467,6 +474,28 @@ ${sequence}`
               if (errorDiv) {
                 errorDiv.innerHTML = message + '<br><button class="btn" onclick="retryViewer()">Retry</button>';
                 errorDiv.style.display = 'block';
+              }
+            }
+
+            // Show placeholder when no PDB data is available
+            function showPlaceholder() {
+              const loadingMsg = document.getElementById('loadingMessage');
+              const errorDiv = document.getElementById('errorMessage');
+
+              if (loadingMsg) loadingMsg.style.display = 'none';
+              if (errorDiv) errorDiv.style.display = 'none';
+
+              // Create placeholder message
+              const viewerElement = document.getElementById('viewer');
+              if (viewerElement) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'viewer-placeholder';
+                placeholder.innerHTML = \`
+                  <div class="molecule-icon">🧬</div>
+                  <p>No 3D structure data available</p>
+                  <small>Generate a 3D structure first or upload a PDB file</small>
+                \`;
+                viewerElement.appendChild(placeholder);
               }
             }
 
