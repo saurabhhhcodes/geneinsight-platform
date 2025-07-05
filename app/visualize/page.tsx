@@ -371,7 +371,7 @@ END`;
       if (viewer && window.$3Dmol) {
         viewer.clear()
         viewer.addModel(fileContent, "pdb")
-        viewer.setStyle({}, getStyleConfig(representation, colorScheme))
+        applyVisualizationStyle(viewer, representation, colorScheme)
         viewer.zoomTo()
         viewer.render()
       }

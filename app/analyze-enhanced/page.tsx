@@ -1161,7 +1161,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
             }
           }
 
-          setResults(prev => ({
+          setResults((prev: any) => ({
             ...prev,
             structure3D: transformedStructure
           }))

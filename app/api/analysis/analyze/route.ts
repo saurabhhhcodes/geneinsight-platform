@@ -87,7 +87,7 @@ function findORFs(sequence: string) {
 }
 
 function findMotifs(sequence: string) {
-  const motifs = []
+  const motifs: Array<{name: string, pattern: string, position: number, sequence: string}> = []
   const commonMotifs = {
     'TATA Box': 'TATAAA',
     'CAAT Box': 'CCAAT',

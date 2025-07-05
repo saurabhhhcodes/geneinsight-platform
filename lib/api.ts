@@ -229,8 +229,7 @@ export const useMockData = () => {
   return false; // Always use real API now
 };
 
-// Export mockData as named export for easier importing
-export { mockData };
+// mockData is already exported above
 
 export default {
   authAPI,

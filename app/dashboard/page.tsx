@@ -89,7 +89,13 @@ export default function DashboardPage() {
                 firstName: payload.firstName || "User",
                 lastName: payload.lastName || "",
                 email: payload.sub || payload.email || "user@example.com",
-                role: payload.role || "RESEARCHER"
+                role: payload.role || "RESEARCHER",
+                avatar: "/api/placeholder/40/40",
+                lastLogin: new Date().toISOString(),
+                analysisCount: 0,
+                unreadNotifications: 0,
+                institution: "Research Institute",
+                joinDate: new Date().toISOString()
               })
             } catch (e) {
               console.log("Could not decode token")

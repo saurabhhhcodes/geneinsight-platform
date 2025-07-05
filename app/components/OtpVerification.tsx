@@ -172,7 +172,6 @@ export default function OtpVerification({ email, otpType, onVerified, onResend }
             autoComplete="one-time-code"
             aria-describedby="otp-help"
             maxLength={6}
-            maxLength={6}
           />
           <p id="otp-help" className="text-sm text-muted-foreground">
             Enter the 6-digit verification code sent to your email.
