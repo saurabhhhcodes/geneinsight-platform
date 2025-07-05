@@ -1127,7 +1127,8 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
+    <>
+      <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Enhanced DNA Analysis</h1>
         <p className="text-gray-600">Analyze DNA sequences with optional 3D structure generation</p>
@@ -1440,6 +1441,7 @@ Status: \${atomLines.length > 0 ? 'SUCCESS: PDB format is correct - ' + atomLine
           </CardContent>
         </Card>
       )}
-    </div>
+      </div>
+    </>
   )
 }
