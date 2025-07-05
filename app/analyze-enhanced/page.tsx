@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Upload, Dna, BarChart3, FileText, Loader2, AlertCircle, CheckCircle, Atom, Zap, Eye, Download } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import AnalysisResults from '@/app/components/AnalysisResults'
 
 export default function EnhancedAnalyzePage() {
   const [sequence, setSequence] = useState("")
@@ -165,11 +166,54 @@ ${sequence}`
             .main-content { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
             .viewer-section { background: #f8f9fa; border-radius: 8px; padding: 20px; }
             .info-section { }
-            .viewer-container { width: 100%; height: 400px; border: 2px solid #ddd; border-radius: 8px; background: #000; position: relative; }
-            .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 16px; z-index: 10; }
+            .viewer-container {
+              width: 100%;
+              height: 400px;
+              border: 2px solid #ddd;
+              border-radius: 8px;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              position: relative;
+              overflow: hidden;
+            }
+            .loading-message {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color: white;
+              font-size: 16px;
+              z-index: 10;
+              text-align: center;
+              background: rgba(0,0,0,0.7);
+              padding: 20px;
+              border-radius: 8px;
+            }
             .error-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff6b6b; font-size: 14px; text-align: center; z-index: 10; }
             .structure-overlay { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; z-index: 5; }
             .viewer-controls { margin-top: 10px; text-align: center; }
+            .viewer-placeholder {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              text-align: center;
+              color: white;
+              z-index: 5;
+            }
+            .viewer-placeholder .molecule-icon {
+              font-size: 48px;
+              margin-bottom: 10px;
+              opacity: 0.7;
+            }
+            .viewer-placeholder p {
+              font-size: 18px;
+              margin: 10px 0;
+              font-weight: 500;
+            }
+            .viewer-placeholder small {
+              font-size: 14px;
+              opacity: 0.8;
+            }
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
             .info-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
             .info-card h3 { margin: 0 0 5px 0; color: #007bff; font-size: 14px; }

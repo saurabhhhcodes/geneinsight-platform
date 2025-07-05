@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import apiService from '@/app/lib/api';
 import { webSocketService } from '@/app/lib/websocket';
+import AnalysisResults from '@/app/components/AnalysisResults';
 
 export default function AnalyzePage() {
   const [sequence, setSequence] = useState('');
@@ -63,22 +64,32 @@ export default function AnalyzePage() {
       setError(null);
       setProgress(0);
 
-      // Use simple analysis for now (no authentication required)
-      const response = await apiService.analyzeSequenceSimple(sequence);
+      // Use the correct analysis endpoint with proper error handling
+      console.log('Sending sequence for analysis:', sequence.trim());
 
-      if (response.error) {
-        throw new Error(response.error);
+      const response = await fetch('/api/analysis/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sequence: sequence.trim() }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Analysis failed');
       }
 
-      if (response.data) {
-        setResults(response.data);
-        setStatus('success');
-        setProgress(100);
-        toast({
-          title: 'Analysis Complete',
-          description: 'Sequence analysis completed successfully!',
-        });
-      } else {
+      const data = await response.json();
+      console.log('Received analysis data:', data);
+
+      setResults(data);
+      setStatus('success');
+      setProgress(100);
+      toast({
+        title: 'Analysis Complete',
+        description: 'Sequence analysis completed successfully!',
+      }); else {
         throw new Error('No analysis results received');
       }
 
@@ -195,10 +206,7 @@ export default function AnalyzePage() {
       )}
       
       {status === 'success' && results && (
-        <div className="mt-4 p-4 bg-green-100 text-green-700 rounded">
-          <h2 className="font-bold">Results:</h2>
-          <pre>{JSON.stringify(results, null, 2)}</pre>
-        </div>
+        <AnalysisResults results={results} />
       )}
     </div>
   );

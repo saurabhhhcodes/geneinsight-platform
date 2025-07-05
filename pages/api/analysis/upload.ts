@@ -274,31 +274,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const form = formidable({
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-    });
-
-    const [fields, files] = await form.parse(req);
-    
     let sequence = '';
-    
-    // Handle file upload
-    if (files.file && files.file[0]) {
-      const file = files.file[0];
-      const fileContent = fs.readFileSync(file.filepath, 'utf8');
-      
-      // Parse FASTA format
-      if (file.originalFilename?.endsWith('.fasta') || file.originalFilename?.endsWith('.fa')) {
-        const lines = fileContent.split('\n');
-        sequence = lines.filter(line => !line.startsWith('>')).join('');
-      } else {
-        sequence = fileContent;
+
+    // Check if request is JSON or FormData
+    const contentType = req.headers['content-type'] || '';
+
+    if (contentType.includes('application/json')) {
+      // Handle JSON request (direct sequence input)
+      const { sequence: inputSequence } = req.body;
+      if (inputSequence) {
+        sequence = inputSequence;
       }
-    }
-    
-    // Handle direct sequence input
-    if (fields.sequence && fields.sequence[0]) {
-      sequence = fields.sequence[0];
+    } else {
+      // Handle FormData request (file upload)
+      const form = formidable({
+        maxFileSize: 10 * 1024 * 1024, // 10MB
+      });
+
+      const [fields, files] = await form.parse(req);
+
+      // Handle file upload
+      if (files.file && files.file[0]) {
+        const file = files.file[0];
+        const fileContent = fs.readFileSync(file.filepath, 'utf8');
+
+        // Parse FASTA format
+        if (file.originalFilename?.endsWith('.fasta') || file.originalFilename?.endsWith('.fa')) {
+          const lines = fileContent.split('\n');
+          sequence = lines.filter(line => !line.startsWith('>')).join('');
+        } else {
+          sequence = fileContent;
+        }
+      }
+
+      // Handle direct sequence input from form
+      if (fields.sequence && fields.sequence[0]) {
+        sequence = fields.sequence[0];
+      }
     }
 
     if (!sequence) {
