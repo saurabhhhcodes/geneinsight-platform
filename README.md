@@ -13,6 +13,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
 [![3DMol.js](https://img.shields.io/badge/3DMol.js-2.5.1-green.svg)](https://3dmol.csb.pitt.edu/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub](https://img.shields.io/badge/GitHub-saurabhhhcodes-black?logo=github)](https://github.com/saurabhhhcodes)
 
 **🚀 Live SaaS Platform**: [https://geneinsight-platform.vercel.app](https://geneinsight-platform.vercel.app)
 **💰 Pricing Plans**: [View SaaS Pricing](https://geneinsight-platform.vercel.app/pricing)
@@ -225,7 +226,7 @@ The platform is now **production-ready as a SaaS application** with all necessar
    - Generate publication-ready molecular visualizations
    - Perform preliminary analysis for grant applications
 
-> **New Contributors Welcome!** 👋 This project supports all skill levels. Check out our [Contributing Guide](CONTRIBUTING.md) and [Good First Issues](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) to get started!
+> **New Contributors Welcome!** 👋 This project supports all skill levels. Check out our [Contributing Guide](CONTRIBUTING.md) and [Good First Issues](https://github.com/saurabhhhcodes/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) to get started!
 
 ## 🚀 Quick Start Guide
 
@@ -236,7 +237,7 @@ Perfect for demos, learning, and quick deployment.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/8packcoder/geneinsight-platform.git
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
 cd geneinsight-platform
 
 # 2. Install dependencies
@@ -258,7 +259,7 @@ Complete production-ready environment with all services.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/8packcoder/geneinsight-platform.git
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
 cd geneinsight-platform
 
 # 2. Start all services
@@ -284,7 +285,7 @@ For developers who want full control and customization.
 
 ```bash
 # 1. Clone and setup frontend
-git clone https://github.com/8packcoder/geneinsight-platform.git
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
 cd geneinsight-platform
 npm install
 npm run dev  # Runs on http://localhost:3000
@@ -624,7 +625,7 @@ This project is designed to be beginner-friendly. Whether you're new to programm
 ### **📚 Getting Started as a Contributor**
 1. **Read the [Contributing Guide](CONTRIBUTING.md)** - Complete guide for contributors
 2. **Check [Development Setup](DEVELOPMENT.md)** - Step-by-step setup instructions
-3. **Look for [Good First Issues](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** - Perfect for beginners
+3. **Look for [Good First Issues](https://github.com/saurabhhhcodes/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** - Perfect for beginners
 4. **Join the Discussion** - Ask questions, share ideas
 
 ### **🎯 Quick Contributor Setup**
@@ -723,7 +724,7 @@ NODE_ENV=production
 
 **1. Clone Repository**
 ```bash
-git clone https://github.com/8packcoder/geneinsight-platform.git
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
 cd geneinsight-platform
 ```
 
@@ -777,7 +778,7 @@ docker-compose down -v
 #### **Frontend Setup**
 ```bash
 # 1. Clone and install
-git clone https://github.com/8packcoder/geneinsight-platform.git
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
 cd geneinsight-platform
 npm install
 
@@ -935,21 +936,21 @@ cors.allowed-origins=http://localhost:3000,https://geneinsight-platform.vercel.a
 ## 🤝 Community & Support
 
 ### **📞 Getting Help**
-- 🐛 **Bug Reports**: [Create an Issue](https://github.com/8packcoder/geneinsight-platform/issues/new?template=bug_report.md)
-- 💡 **Feature Requests**: [Request a Feature](https://github.com/8packcoder/geneinsight-platform/issues/new?template=feature_request.md)
-- ❓ **Questions**: [GitHub Discussions](https://github.com/8packcoder/geneinsight-platform/discussions)
+- 🐛 **Bug Reports**: [Create an Issue](https://github.com/saurabhhhcodes/geneinsight-platform/issues/new?template=bug_report.md)
+- 💡 **Feature Requests**: [Request a Feature](https://github.com/saurabhhhcodes/geneinsight-platform/issues/new?template=feature_request.md)
+- ❓ **Questions**: [GitHub Discussions](https://github.com/saurabhhhcodes/geneinsight-platform/discussions)
 - 📖 **Documentation**: Check our [guides](CONTRIBUTING.md) and [development docs](DEVELOPMENT.md)
 
 ### **🌟 Contributors**
 This project exists thanks to all the people who contribute!
 
-[![Contributors](https://contrib.rocks/image?repo=8packcoder/geneinsight-platform)](https://github.com/8packcoder/geneinsight-platform/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=saurabhhhcodes/geneinsight-platform)](https://github.com/saurabhhhcodes/geneinsight-platform/graphs/contributors)
 
 ### **📊 Project Stats**
-![GitHub stars](https://img.shields.io/github/stars/8packcoder/geneinsight-platform?style=social)
-![GitHub forks](https://img.shields.io/github/forks/8packcoder/geneinsight-platform?style=social)
-![GitHub issues](https://img.shields.io/github/issues/8packcoder/geneinsight-platform)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/8packcoder/geneinsight-platform)
+![GitHub stars](https://img.shields.io/github/stars/saurabhhhcodes/geneinsight-platform?style=social)
+![GitHub forks](https://img.shields.io/github/forks/saurabhhhcodes/geneinsight-platform?style=social)
+![GitHub issues](https://img.shields.io/github/issues/saurabhhhcodes/geneinsight-platform)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/saurabhhhcodes/geneinsight-platform)
 
 ## 📜 License & Legal
 
@@ -1022,7 +1023,7 @@ This project uses several open source libraries:
 **Citation Format:**
 ```
 GeneInsight Platform. (2024). AI-Powered Bioinformatics Platform for Gene-Disease Association Analysis.
-GitHub. https://github.com/8packcoder/geneinsight-platform
+GitHub. https://github.com/saurabhhhcodes/geneinsight-platform
 ```
 
 ### **🏢 Commercial Use**
@@ -1046,7 +1047,7 @@ GitHub. https://github.com/8packcoder/geneinsight-platform
 - You confirm you have rights to contribute
 
 **Copyright Holders:**
-- Original code: 8packcoder and contributors
+- Original code: saurabhhhcodes and contributors
 - Third-party libraries: Their respective owners
 - Community contributions: Individual contributors
 
@@ -1077,12 +1078,12 @@ GitHub. https://github.com/8packcoder/geneinsight-platform
 1. **⭐ Star the repository** - Show your support
 2. **🍴 Fork the project** - Create your own copy
 3. **📖 Read the guides** - Check [CONTRIBUTING.md](CONTRIBUTING.md) and [DEVELOPMENT.md](DEVELOPMENT.md)
-4. **🔍 Find an issue** - Look for [Good First Issues](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+4. **🔍 Find an issue** - Look for [Good First Issues](https://github.com/saurabhhhcodes/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 ### **🛠️ Quick Setup**
 ```bash
 # Clone the repository
-git clone https://github.com/8packcoder/geneinsight-platform.git
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
 cd geneinsight-platform
 
 # Run the setup script
@@ -1093,9 +1094,9 @@ npm run dev
 ```
 
 ### **💬 Join the Community**
-- 🐛 **Report Issues**: [GitHub Issues](https://github.com/8packcoder/geneinsight-platform/issues)
-- 💡 **Request Features**: [Feature Requests](https://github.com/8packcoder/geneinsight-platform/issues/new?template=feature_request.md)
-- 🗣️ **Discussions**: [GitHub Discussions](https://github.com/8packcoder/geneinsight-platform/discussions)
+- 🐛 **Report Issues**: [GitHub Issues](https://github.com/saurabhhhcodes/geneinsight-platform/issues)
+- 💡 **Request Features**: [Feature Requests](https://github.com/saurabhhhcodes/geneinsight-platform/issues/new?template=feature_request.md)
+- 🗣️ **Discussions**: [GitHub Discussions](https://github.com/saurabhhhcodes/geneinsight-platform/discussions)
 - 📧 **Contact**: Create an issue for direct communication
 
 ### **🎯 Ways to Contribute**
@@ -1113,7 +1114,7 @@ npm run dev
 
 **Ready to contribute to the future of bioinformatics?**
 
-[**🚀 Get Started**](CONTRIBUTING.md) | [**📖 Documentation**](DEVELOPMENT.md) | [**🗺️ Roadmap**](ROADMAP.md) | [**⭐ Star on GitHub**](https://github.com/8packcoder/geneinsight-platform)
+[**🚀 Get Started**](CONTRIBUTING.md) | [**📖 Documentation**](DEVELOPMENT.md) | [**🗺️ Roadmap**](ROADMAP.md) | [**⭐ Star on GitHub**](https://github.com/saurabhhhcodes/geneinsight-platform)
 
 </div>
 
@@ -1135,7 +1136,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 1. ⭐ Star this repository
 2. 🍴 Fork the project
 3. 📖 Read [CONTRIBUTING.md](CONTRIBUTING.md)
-4. 🔍 Find a [Good First Issue](https://github.com/8packcoder/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+4. 🔍 Find a [Good First Issue](https://github.com/saurabhhhcodes/geneinsight-platform/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 5. 💻 Start coding!
 
 **Made with ❤️ by the open source community**
@@ -1308,8 +1309,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/8packcoder/geneinsight-platform/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/8packcoder/geneinsight-platform/discussions)
+- **Issues**: [GitHub Issues](https://github.com/saurabhhhcodes/geneinsight-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/saurabhhhcodes/geneinsight-platform/discussions)
 - **Email**: support@geneinsight.com
 
 ## 🙏 Acknowledgments

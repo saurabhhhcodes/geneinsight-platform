@@ -1,20 +1,25 @@
 {
   "name": "geneinsight-platform",
-  "version": "1.0.0",
-  "description": "AI-Powered Bioinformatics Platform for Gene-Disease Association Analysis",
-  "author": "8packcoder",
+  "version": "2.0.0",
+  "description": "Complete SaaS Bioinformatics Platform with Multi-Tenant Architecture & Subscription Billing",
+  "author": "saurabhhhcodes",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/8packcoder/geneinsight-platform.git"
+    "url": "https://github.com/saurabhhhcodes/geneinsight-platform.git"
   },
   "keywords": [
+    "saas",
     "bioinformatics",
+    "multi-tenant",
+    "subscription-billing",
     "dna-analysis",
     "protein-structure",
     "3d-visualization",
     "nextjs",
-    "vercel"
+    "vercel",
+    "stripe",
+    "enterprise"
   ],
   "private": false,
   "scripts": {
