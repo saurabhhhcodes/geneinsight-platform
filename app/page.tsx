@@ -21,6 +21,9 @@ export default function LandingPage() {
             <Link href="#features" className="text-gray-600 hover:text-blue-600">
               Features
             </Link>
+            <Link href="/pricing" className="text-gray-600 hover:text-blue-600">
+              Pricing
+            </Link>
             <Link href="#about" className="text-gray-600 hover:text-blue-600">
               About
             </Link>

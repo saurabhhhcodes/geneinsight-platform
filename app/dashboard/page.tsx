@@ -9,6 +9,7 @@ import { Dna, Upload, History, Settings, User, Bell, TrendingUp, FileText, Zap, 
 import Link from "next/link"
 import UserSettingsModal from "@/app/components/UserSettingsModal"
 import NotificationsPanel from "@/app/components/NotificationsPanel"
+import SaaSDashboard from "@/app/components/SaaSDashboard"
 
 export default function DashboardPage() {
   // Modal states
@@ -327,6 +328,12 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </Link>
+        </div>
+
+        {/* SaaS Dashboard - Usage & Billing */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Usage & Billing</h2>
+          <SaaSDashboard />
         </div>
 
         {/* Stats Overview */}

@@ -235,21 +235,59 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { sequence } = body
-    
+
     if (!sequence || typeof sequence !== 'string') {
       return NextResponse.json(
         { error: 'DNA sequence is required' },
         { status: 400 }
       )
     }
-    
+
+    // Track usage for authenticated users
+    const authHeader = request.headers.get('authorization')
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        // Track the analysis usage
+        const usageResponse = await fetch(`${request.nextUrl.origin}/api/usage/track`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authHeader
+          },
+          body: JSON.stringify({
+            resourceType: 'analysis',
+            quantity: 1,
+            metadata: {
+              sequenceLength: sequence.length,
+              sequenceType: 'DNA'
+            }
+          })
+        })
+
+        if (!usageResponse.ok) {
+          const usageError = await usageResponse.json()
+          if (usageResponse.status === 429) {
+            // Usage limit exceeded
+            return NextResponse.json({
+              error: 'Usage limit exceeded',
+              details: usageError.details,
+              upgradeRequired: true
+            }, { status: 429 })
+          }
+        }
+      } catch (usageError) {
+        console.warn('Usage tracking failed:', usageError)
+        // Continue with analysis even if usage tracking fails
+      }
+    }
+
     const analysis = analyzeDNA(sequence)
-    
+
     return NextResponse.json({
       success: true,
       data: analysis
     })
-    
+
   } catch (error) {
     console.error('Analysis error:', error)
     return NextResponse.json(
