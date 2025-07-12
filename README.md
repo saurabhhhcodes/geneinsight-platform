@@ -19,6 +19,53 @@
 
 **GeneInsight Platform** is a **complete Software-as-a-Service (SaaS) bioinformatics platform** that combines cutting-edge AI with advanced molecular visualization. Built for commercial deployment with multi-tenant architecture, subscription billing, and enterprise-grade features.
 
+## 🔬 What Does GeneInsight Platform Do?
+
+**GeneInsight Platform transforms complex genetic analysis into an intuitive, web-based experience.** Here's what researchers, students, and biotechnology professionals can accomplish:
+
+### 🧬 **Genetic Sequence Analysis**
+- **Upload & Analyze**: Simply paste or upload DNA, RNA, or protein sequences in various formats (FASTA, plain text)
+- **Instant Results**: Get comprehensive analysis including:
+  - **Nucleotide/Amino Acid Composition**: Detailed breakdown of sequence components
+  - **GC Content Analysis**: Critical for PCR design and gene expression studies
+  - **Open Reading Frame (ORF) Detection**: Identify potential protein-coding regions
+  - **Motif Recognition**: Find regulatory elements and binding sites
+  - **Molecular Properties**: Calculate molecular weight, isoelectric point, and stability
+
+### 🔬 **3D Molecular Visualization**
+- **Interactive 3D Structures**: View and manipulate protein structures in real-time
+- **Multiple Visualization Modes**: Switch between cartoon, surface, stick, and ball-and-stick representations
+- **PDB File Support**: Import existing protein structures from the Protein Data Bank
+- **Structure Prediction**: AI-powered prediction of 3D protein structures from sequences
+- **High-Quality Exports**: Save publication-ready images and structure files
+
+### 🤖 **AI-Powered Insights**
+- **Automated Classification**: Intelligent sequence type detection (DNA/RNA/Protein)
+- **Structure Prediction**: Machine learning models predict 3D protein structures
+- **Disease Association**: Analyze potential gene-disease relationships
+- **Confidence Scoring**: Get reliability metrics for all predictions
+
+### 📊 **Professional Workflow Management**
+- **Project Organization**: Organize analyses into projects and folders
+- **Team Collaboration**: Share results with team members and collaborators
+- **Export Options**: Download results in PDF, CSV, JSON, and FASTA formats
+- **Analysis History**: Track and revisit previous analyses with version control
+
+### 💼 **Commercial SaaS Features**
+- **Multi-Tenant Architecture**: Secure, isolated workspaces for different organizations
+- **Subscription Plans**: Flexible pricing from free tier to enterprise solutions
+- **Usage Analytics**: Real-time tracking of analyses, storage, and team activity
+- **API Access**: Programmatic access for integration with existing workflows
+
+### 🎯 **Who Benefits from GeneInsight Platform?**
+- **🎓 Students**: Learn bioinformatics with an intuitive, modern interface
+- **🔬 Researchers**: Accelerate genetic analysis with AI-powered tools
+- **🏥 Clinical Labs**: Streamline genetic testing workflows
+- **🏢 Biotech Companies**: Scale bioinformatics operations with SaaS efficiency
+- **👥 Research Teams**: Collaborate seamlessly with shared workspaces
+
+**In essence, GeneInsight Platform makes advanced bioinformatics accessible to everyone - from students learning the basics to professional researchers conducting cutting-edge genetic analysis.**
+
 ### 🎯 **SaaS Business Model**
 
 | Plan | Price | Users | Analyses/Month | Storage | Target Market |
