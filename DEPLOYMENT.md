@@ -1,5 +1,50 @@
 # 🚀 GeneInsight Platform - Deployment Guide
 
+## 🎯 **FREE PLATFORMS WITH FULL LANGCHAIN SUPPORT**
+
+### **🚂 Railway.app (RECOMMENDED)** ⭐
+- ✅ **Free Tier**: $5 credit monthly
+- ✅ **Full LangChain**: Python + transformers support
+- ✅ **Database**: Free PostgreSQL included
+- ✅ **Auto-Deploy**: GitHub integration
+- ✅ **Persistent Storage**: Model caching
+
+```bash
+# Quick Railway Deployment
+npm install -g @railway/cli
+railway login
+railway init
+railway up --dockerfile Dockerfile.railway
+```
+
+### **🎨 Render.com (EXCELLENT)** ⭐
+- ✅ **Free Tier**: Unlimited personal projects
+- ✅ **Full LangChain**: Complete Python support
+- ✅ **Database**: Free PostgreSQL (90 days)
+- ✅ **Auto-Deploy**: GitHub integration
+
+```bash
+# Deploy to Render
+# 1. Connect GitHub repo to Render
+# 2. Use render.yaml configuration
+# 3. Auto-deploys on git push
+```
+
+### **✈️ Fly.io (GREAT)** ⭐
+- ✅ **Free Tier**: 3 shared VMs
+- ✅ **Docker**: Excellent support
+- ✅ **Global**: Edge deployment
+- ✅ **Persistent Volumes**: Model storage
+
+```bash
+# Deploy to Fly.io
+flyctl auth login
+flyctl launch
+flyctl deploy
+```
+
+---
+
 ## 🌐 **Vercel Deployment (Frontend Only)**
 
 ### **Quick Vercel Deployment:**

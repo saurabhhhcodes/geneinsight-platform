@@ -215,7 +215,50 @@ docker-compose up -d
 # Access: Frontend (3000), Backend (8080), ML Service (5000)
 ```
 
-### **🧠 Option 3: LangChain AI Development Setup**
+### **🚂 Option 3: Railway.app (FREE with Full LangChain)** ⭐ **RECOMMENDED**
+```bash
+# 1. Clone repository
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
+cd geneinsight-platform
+
+# 2. Install Railway CLI
+npm install -g @railway/cli
+
+# 3. Deploy to Railway
+railway login
+railway init
+railway up --dockerfile Dockerfile.railway
+
+# 4. Access full LangChain features
+# Frontend: https://your-app.railway.app
+# AI Chat: https://your-app.railway.app/ai-chat
+```
+
+### **🎨 Option 4: Render.com (FREE Alternative)**
+```bash
+# 1. Fork repository on GitHub
+# 2. Connect to Render.com
+# 3. Use render.yaml configuration
+# 4. Auto-deploys on git push
+# Features: Full LangChain + PostgreSQL
+```
+
+### **✈️ Option 5: Fly.io (FREE with Docker)**
+```bash
+# 1. Clone repository
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
+cd geneinsight-platform
+
+# 2. Install Fly CLI
+curl -L https://fly.io/install.sh | sh
+
+# 3. Deploy to Fly.io
+flyctl auth login
+flyctl launch
+flyctl deploy
+```
+
+### **🧠 Option 6: Local Development (Full Features)**
 ```bash
 # 1. Clone and setup
 git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
@@ -246,6 +289,23 @@ curl -X POST http://localhost:5000/langchain/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "SGFRKMAFPSGKVEGCMVQVTCGTTTLNGLWLDDVVYCPRHVICTSEDMLNPNYEDLLIRKSNHNFLVQAGNVQLRVIGHSMQNCVLKLKVDTANPKTPKYKFVRIQPGQTFSVLACYNGSPSGVYQCAMRPNFTIKGSFLNGSCGSVGFNIDYDCVSFCYMHHMELPTGVHAGTDLEGNFYGPFVDRQTAQAAGTDTTITVNVLAWLYAAVINGDRWFLNRFTTTLNDFNLVAMKYNYEPLTQDHVDILGPLSAQTGIAVLDMCASLKELLQNGMNGRTILGSALLEDEFTPFDVVRQCSGVTFQ"}'
 ```
+
+## 📊 **Deployment Platform Comparison**
+
+| Platform | Free Tier | LangChain Support | Database | Auto-Deploy | Best For |
+|----------|-----------|-------------------|----------|-------------|----------|
+| **🚂 Railway** | $5 credit/month | ✅ Full Support | ✅ PostgreSQL | ✅ GitHub | **Production** |
+| **🎨 Render** | ✅ Unlimited | ✅ Full Support | ✅ PostgreSQL | ✅ GitHub | **Development** |
+| **✈️ Fly.io** | 3 VMs free | ✅ Docker Support | ✅ PostgreSQL | ✅ GitHub | **Global Edge** |
+| **🌐 Vercel** | ✅ Unlimited | ❌ Frontend Only | ❌ External | ✅ GitHub | **Frontend Demo** |
+| **🐳 Local** | ✅ Free | ✅ Full Support | ✅ PostgreSQL | ❌ Manual | **Development** |
+
+### **🎯 Recommendations:**
+- **🚂 Railway**: Best for production deployment with full LangChain features
+- **🎨 Render**: Great for development and testing with unlimited free tier
+- **✈️ Fly.io**: Excellent for global deployment with edge computing
+- **🌐 Vercel**: Perfect for frontend demos and static features
+- **🐳 Local**: Ideal for development and testing all features
 
 ## 🔌 **SaaS API Endpoints**
 
