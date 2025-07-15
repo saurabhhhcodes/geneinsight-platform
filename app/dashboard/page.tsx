@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Dna, Upload, History, Settings, User, Bell, TrendingUp, FileText, Zap, Brain, Eye, Sparkles } from "lucide-react"
+import { Dna, Upload, History, Settings, User, Bell, TrendingUp, FileText, Zap, Brain, Eye, Sparkles, Target } from "lucide-react"
 import Link from "next/link"
 import UserSettingsModal from "@/app/components/UserSettingsModal"
 import NotificationsPanel from "@/app/components/NotificationsPanel"
@@ -325,6 +325,21 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">Create detailed analysis reports</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/docking">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-green-200">
+              <CardHeader className="pb-3">
+                <div className="flex items-center space-x-2">
+                  <Target className="h-6 w-6 text-green-600" />
+                  <CardTitle className="text-lg">Molecular Docking</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">Protein-ligand docking with AI insights</p>
+                <Badge className="mt-2 bg-green-100 text-green-800">NEW</Badge>
               </CardContent>
             </Card>
           </Link>

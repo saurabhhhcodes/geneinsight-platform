@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Dna, Brain, BarChart3, Users, Shield, Zap } from "lucide-react"
+import { ArrowRight, Dna, Brain, BarChart3, Users, Shield, Zap, Target } from "lucide-react"
 import Link from "next/link"
 
 export default function LandingPage() {
@@ -73,7 +73,7 @@ export default function LandingPage() {
                 <p className="text-gray-600">Direct access to all platform features - No login required!</p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid md:grid-cols-5 gap-4">
                 <Link href="/dashboard">
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-blue-200 bg-white">
                     <CardHeader className="pb-3">
@@ -116,6 +116,37 @@ export default function LandingPage() {
                     <CardContent>
                       <p className="text-sm text-gray-600">Standard DNA sequence analysis</p>
                       <Badge className="mt-2 bg-green-100 text-green-800">Fast & Reliable</Badge>
+                    </CardContent>
+                  </Card>
+                </Link>
+
+                <Link href="/docking">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-orange-200 bg-white">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center space-x-2">
+                        <Target className="h-6 w-6 text-orange-600" />
+                        <CardTitle className="text-lg">Molecular Docking</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600">Protein-ligand docking with AI insights</p>
+                      <Badge className="mt-2 bg-orange-100 text-orange-800">NEW</Badge>
+                    </CardContent>
+                  </Card>
+                </Link>
+
+                <Link href="/ai-chat">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-purple-200 bg-white">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center space-x-2">
+                        <Brain className="h-6 w-6 text-purple-600" />
+                        <CardTitle className="text-lg">AI Chat</CardTitle>
+                        <Badge variant="secondary" className="text-xs">LangChain</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600">Conversational AI for molecular analysis</p>
+                      <Badge className="mt-2 bg-purple-100 text-purple-800">LLM Powered</Badge>
                     </CardContent>
                   </Card>
                 </Link>
