@@ -1,0 +1,52 @@
+# Render.com Optimized Dockerfile for GeneInsight Platform
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js for frontend
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Copy and install Python dependencies
+COPY ml_service/requirements.txt ./ml_service/
+RUN cd ml_service && pip install --no-cache-dir -r requirements.txt
+
+# Install LangChain dependencies
+RUN pip install --no-cache-dir transformers torch langchain-community
+
+# Copy application code
+COPY . .
+
+# Build frontend
+RUN npm install && npm run build
+
+# Create model cache directory
+RUN mkdir -p /opt/render/project/src/transformers_cache
+
+# Set environment variables
+ENV TRANSFORMERS_CACHE=/opt/render/project/src/transformers_cache
+ENV FLASK_ENV=production
+ENV NODE_ENV=production
+ENV PYTHONUNBUFFERED=1
+
+# Expose port
+EXPOSE 10000
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+# Start ML service with LangChain\n\
+cd /app/ml_service\n\
+export PORT=10000\n\
+python app.py\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Start the application
+CMD ["/app/start.sh"]

@@ -1,29 +1,15 @@
 services:
-  # Frontend Service
+  # Complete GeneInsight Platform with LangChain
   - type: web
-    name: geneinsight-frontend
-    env: node
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: NEXT_TELEMETRY_DISABLED
-        value: "1"
-      - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: geneinsight-ml-service
-          property: host
-    
-  # ML Service with LangChain
-  - type: web
-    name: geneinsight-ml-service
+    name: geneinsight-platform
     env: python
+    region: oregon
+    plan: free
     buildCommand: |
       cd ml_service &&
+      pip install --upgrade pip &&
       pip install -r requirements.txt &&
-      pip install transformers torch langchain-community
+      pip install transformers torch langchain-community --no-cache-dir
     startCommand: cd ml_service && python app.py
     envVars:
       - key: FLASK_ENV
@@ -31,20 +17,16 @@ services:
       - key: TRANSFORMERS_CACHE
         value: /opt/render/project/src/transformers_cache
       - key: PORT
-        value: "5000"
+        value: "10000"
+      - key: PYTHONUNBUFFERED
+        value: "1"
     disk:
       name: model-cache
       mountPath: /opt/render/project/src/transformers_cache
-      sizeGB: 2
-
-  # PostgreSQL Database
-  - type: pserv
-    name: geneinsight-database
-    env: postgresql
-    plan: free
-    ipAllowList: []
+      sizeGB: 1
 
 databases:
   - name: geneinsight-db
     databaseName: geneinsight
-    user: postgres
+    user: geneinsight_user
+    plan: free

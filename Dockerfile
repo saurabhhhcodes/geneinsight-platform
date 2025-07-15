@@ -1,47 +1,97 @@
-# Multi-stage Dockerfile for Spring Boot Backend
+# Optimized Railway Deployment - GeneInsight Platform with LangChain
+FROM node:18-alpine AS frontend-builder
 
-# Stage 1: Build the application
-FROM maven:3.9.4-openjdk-17 AS builder
+# Build frontend
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
 
+# Python ML Service with LangChain
+FROM python:3.9-slim AS ml-service
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Copy pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copy ML service requirements
+COPY ml_service/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code and build
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Install LangChain dependencies
+RUN pip install --no-cache-dir transformers torch langchain-community
 
-# Stage 2: Runtime image
-FROM openjdk:17-jdk-slim
+# Copy ML service code
+COPY ml_service/ ./
 
-WORKDIR /app
-
-# Install curl for health checks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN groupadd -r geneinsight && useradd -r -g geneinsight geneinsight
-
-# Copy the built JAR from builder stage
-COPY --from=builder /app/target/*.jar app.jar
-
-# Change ownership to non-root user
-RUN chown geneinsight:geneinsight app.jar
-
-# Switch to non-root user
-USER geneinsight
+# Create model cache directory
+RUN mkdir -p /tmp/transformers_cache
+ENV TRANSFORMERS_CACHE=/tmp/transformers_cache
 
 # Expose port
-EXPOSE 8080
+EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/api/health || exit 1
+# Start ML service
+CMD ["python", "app.py"]
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Final stage - combine frontend and ML service
+FROM python:3.9-slim
 
-# Optional: JVM tuning for production
-# ENTRYPOINT ["java", "-Xms512m", "-Xmx2g", "-XX:+UseG1GC", "-XX:+UseContainerSupport", "-jar", "app.jar"]
+# Install Node.js for frontend
+RUN apt-get update && apt-get install -y \
+    curl \
+    gcc \
+    g++ \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy built frontend
+COPY --from=frontend-builder /app/.next ./.next
+COPY --from=frontend-builder /app/public ./public
+COPY --from=frontend-builder /app/package*.json ./
+COPY --from=frontend-builder /app/node_modules ./node_modules
+
+# Copy ML service
+COPY ml_service/ ./ml_service/
+
+# Install Python dependencies
+COPY ml_service/requirements.txt ./ml_service/
+RUN pip install --no-cache-dir -r ml_service/requirements.txt
+RUN pip install --no-cache-dir transformers torch langchain-community
+
+# Create model cache directory
+RUN mkdir -p /tmp/transformers_cache
+ENV TRANSFORMERS_CACHE=/tmp/transformers_cache
+
+# Environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+# Start ML service in background\n\
+cd /app/ml_service && python app.py &\n\
+\n\
+# Wait for ML service to start\n\
+sleep 10\n\
+\n\
+# Start frontend\n\
+cd /app && npm start\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Expose ports
+EXPOSE 3000 5000
+
+# Start both services
+CMD ["/app/start.sh"]
