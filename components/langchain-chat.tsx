@@ -139,19 +139,27 @@ export default function LangChainChat({ context }: LangChainChatProps) {
 
       if (response.ok) {
         const data = await response.json()
-        
+        console.log('API Response:', data) // Debug log
+
+        // Handle both old format (data.data.response) and new format (data.response)
+        const responseContent = data.data?.response || data.response || 'No response received'
+        const analysis = data.data?.analysis || data.metadata || null
+        const context = data.data?.conversation_context || data.metadata || null
+
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           type: 'assistant',
-          content: data.data.response,
+          content: responseContent,
           timestamp: new Date(),
-          analysis: data.data.analysis,
-          context: data.data.conversation_context
+          analysis: analysis,
+          context: context
         }
 
         setMessages(prev => [...prev, assistantMessage])
       } else {
-        throw new Error('Failed to get response')
+        const errorData = await response.text()
+        console.error('API Error:', errorData)
+        throw new Error(`API Error: ${response.status}`)
       }
     } catch (error) {
       const errorMessage: Message = {
