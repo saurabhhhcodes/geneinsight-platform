@@ -1,0 +1,74 @@
+# Apillon-Optimized Dockerfile for GeneInsight Platform
+# Multi-stage build for efficient deployment
+
+# Stage 1: Frontend Build
+FROM node:18-alpine AS frontend-builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+# Stage 2: Python Backend with LangChain
+FROM python:3.9-slim AS backend
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy ML service requirements
+COPY ml_service/requirements.txt ./ml_service/
+RUN cd ml_service && pip install --no-cache-dir -r requirements.txt
+
+# Install LangChain and transformers
+RUN pip install --no-cache-dir \
+    transformers==4.35.0 \
+    torch==2.1.0 \
+    langchain-community==0.0.10 \
+    accelerate \
+    sentencepiece
+
+# Copy ML service code
+COPY ml_service/ ./ml_service/
+
+# Copy built frontend
+COPY --from=frontend-builder /app/.next ./frontend/.next
+COPY --from=frontend-builder /app/public ./frontend/public
+COPY --from=frontend-builder /app/package*.json ./frontend/
+
+# Create model cache directory
+RUN mkdir -p /tmp/transformers_cache
+ENV TRANSFORMERS_CACHE=/tmp/transformers_cache
+
+# Set environment variables
+ENV FLASK_ENV=production
+ENV PYTHONUNBUFFERED=1
+ENV PORT=5000
+
+# Create startup script for Apillon
+RUN echo '#!/bin/bash\n\
+echo "🚀 Starting GeneInsight Platform on Apillon..."\n\
+echo "🧠 Loading LangChain models..."\n\
+cd /app/ml_service\n\
+export PORT=5000\n\
+export FLASK_ENV=production\n\
+export TRANSFORMERS_CACHE=/tmp/transformers_cache\n\
+python app.py\n\
+' > /app/start-apillon.sh && chmod +x /app/start-apillon.sh
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:5000/health || exit 1
+
+# Expose port
+EXPOSE 5000
+
+# Start the application
+CMD ["/app/start-apillon.sh"]

@@ -5,5 +5,30 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
-  "devCommand": "npm run dev"
+  "devCommand": "npm run dev",
+  "functions": {
+    "api/langchain-chat.js": {
+      "runtime": "edge"
+    },
+    "api/langchain/status.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/health.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/langchain/status",
+      "destination": "/api/langchain/status"
+    },
+    {
+      "source": "/langchain/chat",
+      "destination": "/api/langchain-chat"
+    }
+  ]
 }

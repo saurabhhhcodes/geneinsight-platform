@@ -154,6 +154,50 @@ Experience the future of molecular analysis with our **LangChain-powered AI assi
 - **Real-time Results**: Instant analysis with detailed visualizations and usage metering
 - **Export Options**: Download results in multiple formats with plan-based limits
 
+## 📁 **Repository Structure**
+
+```
+geneinsight-platform/
+├── 🌐 Frontend (Next.js)
+│   ├── app/                    # Next.js 13+ App Router
+│   │   ├── page.tsx           # Landing page
+│   │   ├── dashboard/         # SaaS dashboard
+│   │   ├── ai-chat/          # LangChain AI chat interface
+│   │   ├── docking/          # Molecular docking with 3D viewer
+│   │   └── api/              # Next.js API routes
+│   ├── components/           # React components
+│   │   ├── langchain-chat.tsx # AI chat component
+│   │   └── simple-3d-viewer.tsx # 3D molecular viewer
+│   └── lib/                  # Utilities and client-side analysis
+│
+├── 🧠 ML Service (Python + LangChain)
+│   ├── langchain_service/    # LangChain integration
+│   │   └── molecular_chain.py # Conversational AI chains
+│   ├── docking_service/      # Molecular docking algorithms
+│   ├── models/              # ML models and utilities
+│   ├── requirements.txt     # Python dependencies
+│   └── app.py              # Flask application
+│
+├── ☕ Backend (Java Spring Boot)
+│   ├── src/main/java/       # Java source code
+│   │   └── com/geneinsight/ # Application packages
+│   ├── src/main/resources/  # Configuration files
+│   └── pom.xml             # Maven dependencies
+│
+├── 🐳 Deployment
+│   ├── docker-compose.yml   # Multi-service Docker setup
+│   ├── Dockerfile          # Main application container
+│   ├── Dockerfile.apillon   # Apillon-optimized container
+│   ├── apillon.json        # Apillon deployment config
+│   ├── deploy-apillon.sh   # Automated Apillon deployment
+│   └── vercel.json         # Vercel configuration
+│
+└── 📚 Documentation
+    ├── README.md           # This file
+    ├── DEPLOYMENT.md       # Deployment instructions
+    └── APILLON_DEPLOYMENT.md # Apillon-specific guide
+```
+
 ## 🏗️ **Technical Architecture**
 
 ### **🔗 LangChain AI Integration**
@@ -177,7 +221,7 @@ Frontend (Next.js) → ML Service (Flask) → LangChain → DialoGPT-small
 - **ML Service**: Python Flask with LangChain integration
 - **AI Models**: LangChain + DialoGPT-small for conversational AI
 - **3D Visualization**: Canvas-based molecular viewer
-- **Deployment**: Vercel (Frontend) + Docker (Full Stack)
+- **Deployment**: Apillon (Web3) + Vercel (Frontend) + Docker (Full Stack)
 
 ### **📊 System Capabilities:**
 - **Real-time AI Chat**: Conversational molecular analysis
@@ -189,7 +233,24 @@ Frontend (Next.js) → ML Service (Flask) → LangChain → DialoGPT-small
 
 ## 🚀 **Quick Start Guide**
 
-### **🌐 Option 1: Vercel (Serverless) - 5 Minutes Setup**
+### **🌐 Option 1: Apillon (Web3 + Full LangChain)** ⭐ **RECOMMENDED**
+```bash
+# 1. Clone repository
+git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
+cd geneinsight-platform
+
+# 2. Install Apillon CLI and deploy
+npm install -g @apillon/cli
+apillon auth login
+chmod +x deploy-apillon.sh
+./deploy-apillon.sh
+
+# 3. Access full LangChain features on Web3
+# Frontend: https://geneinsight.apillon.io
+# AI Chat: https://geneinsight.apillon.io/ai-chat
+```
+
+### **🌐 Option 2: Vercel (Enhanced with Edge Functions)**
 ```bash
 # 1. Clone the repository
 git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
@@ -203,7 +264,7 @@ npm i -g vercel
 vercel --prod
 ```
 
-### **🐳 Option 2: Docker (Full Stack) - One Command Setup**
+### **🐳 Option 3: Docker (Full Stack) - One Command Setup**
 ```bash
 # 1. Clone the repository
 git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
@@ -215,7 +276,7 @@ docker-compose up -d
 # Access: Frontend (3000), Backend (8080), ML Service (5000)
 ```
 
-### **🚂 Option 3: Railway.app (FREE with Full LangChain)** ⭐ **RECOMMENDED**
+### **🚂 Option 4: Railway.app (Full LangChain)**
 ```bash
 # 1. Clone repository
 git clone https://github.com/saurabhhhcodes/geneinsight-platform.git
@@ -294,18 +355,55 @@ curl -X POST http://localhost:5000/langchain/chat \
 
 | Platform | Free Tier | LangChain Support | Database | Auto-Deploy | Best For |
 |----------|-----------|-------------------|----------|-------------|----------|
+| **🌐 Apillon** | Free tier available | ✅ Full Support | ✅ PostgreSQL | ✅ GitHub | **Web3 Production** |
 | **🚂 Railway** | $5 credit/month | ✅ Full Support | ✅ PostgreSQL | ✅ GitHub | **Production** |
 | **🎨 Render** | ✅ Unlimited | ✅ Full Support | ✅ PostgreSQL | ✅ GitHub | **Development** |
 | **✈️ Fly.io** | 3 VMs free | ✅ Docker Support | ✅ PostgreSQL | ✅ GitHub | **Global Edge** |
-| **🌐 Vercel** | ✅ Unlimited | ❌ Frontend Only | ❌ External | ✅ GitHub | **Frontend Demo** |
+| **🌐 Vercel** | ✅ Unlimited | ✅ Edge Functions | ❌ External | ✅ GitHub | **Enhanced Demo** |
 | **🐳 Local** | ✅ Free | ✅ Full Support | ✅ PostgreSQL | ❌ Manual | **Development** |
 
 ### **🎯 Recommendations:**
-- **🚂 Railway**: Best for production deployment with full LangChain features
-- **🎨 Render**: Great for development and testing with unlimited free tier
-- **✈️ Fly.io**: Excellent for global deployment with edge computing
-- **🌐 Vercel**: Perfect for frontend demos and static features
+- **🌐 Apillon**: Best for Web3 deployment with full LangChain features and decentralized hosting
+- **🚂 Railway**: Great for production deployment with complete AI functionality
+- **🎨 Render**: Excellent for development and testing with unlimited free tier
+- **✈️ Fly.io**: Perfect for global deployment with edge computing
+- **🌐 Vercel**: Enhanced with Edge Functions for AI simulation and client-side analysis
 - **🐳 Local**: Ideal for development and testing all features
+
+---
+
+## 🌐 **Apillon Web3 Deployment**
+
+### **Why Apillon?**
+- **✅ Full Backend Support**: Deploy Python + LangChain on Web3
+- **✅ Decentralized Hosting**: Censorship-resistant infrastructure
+- **✅ Real LLM**: Complete conversational AI functionality
+- **✅ Auto-Scaling**: Handles traffic automatically
+- **✅ Database Support**: PostgreSQL included
+- **✅ Cost-Effective**: Pay for what you use
+
+### **Quick Apillon Deploy:**
+```bash
+# Install Apillon CLI
+npm install -g @apillon/cli
+
+# Login and deploy
+apillon auth login
+chmod +x deploy-apillon.sh
+./deploy-apillon.sh
+
+# Your live URLs:
+# https://geneinsight.apillon.io
+# https://api.geneinsight.apillon.io
+```
+
+### **Apillon Features:**
+- **🧬 Complete AI Platform**: All LangChain features working
+- **🦠 COVID-19 Analysis**: Expert viral protein insights
+- **🎯 Molecular Docking**: Protein-ligand simulations
+- **🔬 3D Visualization**: Interactive molecular viewer
+- **📊 Dashboard**: SaaS features with subscription management
+- **🌐 Web3 Infrastructure**: Decentralized, global distribution
 
 ## 🔌 **SaaS API Endpoints**
 

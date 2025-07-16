@@ -52,7 +52,23 @@ export default function LangChainChat({ context }: LangChainChatProps) {
 
   const checkLangChainStatus = async () => {
     try {
-      const response = await fetch('http://localhost:5000/langchain/status')
+      // Try different API endpoints based on environment
+      let response;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+      try {
+        // Try Apillon backend first
+        response = await fetch(`${apiUrl}/langchain/status`)
+      } catch {
+        try {
+          // Fallback to local development
+          response = await fetch('http://localhost:5000/langchain/status')
+        } catch {
+          // Final fallback to Vercel API
+          response = await fetch('/api/langchain/status')
+        }
+      }
+
       if (response.ok) {
         const data = await response.json()
         setLangchainStatus(data.langchain)
@@ -77,16 +93,49 @@ export default function LangChainChat({ context }: LangChainChatProps) {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://localhost:5000/langchain/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          context: context || {}
+      // Try different API endpoints based on environment
+      let response;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+      try {
+        // Try Apillon backend first
+        response = await fetch(`${apiUrl}/langchain/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: inputMessage,
+            context: context || {}
+          })
         })
-      })
+      } catch {
+        try {
+          // Fallback to local development
+          response = await fetch('http://localhost:5000/langchain/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: inputMessage,
+              context: context || {}
+            })
+          })
+        } catch {
+          // Final fallback to Vercel API
+          response = await fetch('/api/langchain-chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: inputMessage,
+              context: context || {}
+            })
+          })
+        }
+      }
 
       if (response.ok) {
         const data = await response.json()
