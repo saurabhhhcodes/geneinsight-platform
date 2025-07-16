@@ -19,7 +19,8 @@ export default function AIChatPage() {
 
   const checkLangChainStatus = async () => {
     try {
-      const response = await fetch('http://localhost:5000/langchain/status')
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://6d441999-17f0-47ac-94c8-e10957d4469c-00-1aa6zmzvlz1jf.pike.replit.dev'
+      const response = await fetch(`${apiUrl}/langchain/status`)
       if (response.ok) {
         const data = await response.json()
         setLangchainStatus(data)

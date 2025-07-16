@@ -1,7 +1,7 @@
 // API utility functions for GeneInsight Platform
 
-// Use relative URLs for Next.js API routes (no external backend needed)
-const API_BASE_URL = '/api';
+// Use Replit backend URL or fallback to relative URLs
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://6d441999-17f0-47ac-94c8-e10957d4469c-00-1aa6zmzvlz1jf.pike.replit.dev';
 
 // Generic API request function with comprehensive error handling
 async function apiRequest(endpoint: string, options: RequestInit = {}) {

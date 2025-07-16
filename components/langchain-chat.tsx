@@ -54,10 +54,10 @@ export default function LangChainChat({ context }: LangChainChatProps) {
     try {
       // Try different API endpoints based on environment
       let response;
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://6d441999-17f0-47ac-94c8-e10957d4469c-00-1aa6zmzvlz1jf.pike.replit.dev';
 
       try {
-        // Try Apillon backend first
+        // Try Replit backend first
         response = await fetch(`${apiUrl}/langchain/status`)
       } catch {
         try {
@@ -95,10 +95,10 @@ export default function LangChainChat({ context }: LangChainChatProps) {
     try {
       // Try different API endpoints based on environment
       let response;
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://6d441999-17f0-47ac-94c8-e10957d4469c-00-1aa6zmzvlz1jf.pike.replit.dev';
 
       try {
-        // Try Apillon backend first
+        // Try Replit backend first
         response = await fetch(`${apiUrl}/langchain/chat`, {
           method: 'POST',
           headers: {
