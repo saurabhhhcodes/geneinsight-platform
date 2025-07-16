@@ -106,19 +106,23 @@ export default function AIChatPage() {
                     
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Model</span>
-                      <span className="text-sm text-gray-600">{langchainStatus.langchain?.model_info?.name || 'N/A'}</span>
+                      <span className="text-sm text-gray-600">
+                        {langchainStatus.langchain?.model_name || langchainStatus.performance?.model_info?.name || 'N/A'}
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Device</span>
                       <Badge variant="outline" className="text-xs">
-                        {langchainStatus.langchain?.device || 'Unknown'}
+                        {langchainStatus.performance?.device || langchainStatus.langchain?.device || 'Unknown'}
                       </Badge>
                     </div>
-                    
+
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Chains</span>
-                      <span className="text-sm text-gray-600">{langchainStatus.langchain?.chains_initialized || 0}</span>
+                      <span className="text-sm text-gray-600">
+                        {langchainStatus.langchain?.chains_count || langchainStatus.langchain?.chains_initialized || 0}
+                      </span>
                     </div>
                     
                     {langchainStatus.capabilities && (
