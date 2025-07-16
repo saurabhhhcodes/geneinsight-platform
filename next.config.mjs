@@ -18,9 +18,9 @@ const nextConfig = {
   // Optimize for production
   compress: true,
 
-  // Environment variables - use relative URLs for self-contained Next.js app
+  // Environment variables - use Replit backend URL
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '/api',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://6d441999-17f0-47ac-94c8-e10957d4469c-00-1aa6zmzvlz1jf.pike.replit.dev',
   },
 
   // Server external packages
