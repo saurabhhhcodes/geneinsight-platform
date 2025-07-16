@@ -15,12 +15,21 @@
     },
     "api/health.js": {
       "runtime": "nodejs18.x"
+    },
+    "api/langserve-health.py": {
+      "runtime": "python3.9"
+    },
+    "api/analyze-sequence.py": {
+      "runtime": "python3.9"
+    },
+    "api/langchain-chat-enhanced.py": {
+      "runtime": "python3.9"
     }
   },
   "rewrites": [
     {
       "source": "/health",
-      "destination": "/api/health"
+      "destination": "/api/langserve-health"
     },
     {
       "source": "/langchain/status",
@@ -28,7 +37,15 @@
     },
     {
       "source": "/langchain/chat",
-      "destination": "/api/langchain-chat"
+      "destination": "/api/langchain-chat-enhanced"
+    },
+    {
+      "source": "/analyze/langchain",
+      "destination": "/api/analyze-sequence"
+    },
+    {
+      "source": "/analyze/sequence",
+      "destination": "/api/analyze-sequence"
     }
   ]
 }
