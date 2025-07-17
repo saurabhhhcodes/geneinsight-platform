@@ -22,7 +22,7 @@
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black.svg)](https://vercel.com/)
 [![GitHub](https://img.shields.io/badge/GitHub-saurabhhhcodes-black?logo=github)](https://github.com/saurabhhhcodes)
 
-**🚀 Live SaaS Platform**: [https://geneinsight-platform.vercel.app](https://geneinsight-platform.vercel.app)  
+**🚀 Live SaaS Platform**: [[https://geneinsight-platform.vercel.app](https://geneinsight-platform.vercel.app)](https://geneinsight-platform-latest-euwr1g9lf-8packcoders-projects.vercel.app/)  
 **💰 Pricing Plans**: [View SaaS Pricing](https://geneinsight-platform.vercel.app/pricing)  
 **📊 SaaS Dashboard**: Multi-tenant with usage analytics & billing management
 
