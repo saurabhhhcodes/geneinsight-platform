@@ -4,3 +4,6 @@ langgraph
 fastapi
 uvicorn
 langchain-google-genai
+rdkit-pypi
+py3Dmol
+pandas
