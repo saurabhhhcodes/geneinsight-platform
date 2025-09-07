@@ -210,8 +210,8 @@ export default function DashboardPage() {
             </div>
             <nav className="hidden md:flex items-center space-x-4">
               <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-blue-600">Dashboard</Link>
-              <Link href="/genomics" className="text-sm font-medium text-gray-600 hover:text-blue-600">Genomics</Link>
               <Link href="/analyze" className="text-sm font-medium text-gray-600 hover:text-blue-600">Analyze</Link>
+              <Link href="/advanced-analysis" className="text-sm font-medium text-gray-600 hover:text-blue-600">Advanced Analysis</Link>
               <Link href="/history" className="text-sm font-medium text-gray-600 hover:text-blue-600">History</Link>
             </nav>
           </div>
