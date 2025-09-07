@@ -4,6 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from streamlit_backend.agents.genome_analyst import create_genome_analyst_agent
 from streamlit_backend.agents.proteomics_specialist import create_proteomics_specialist_agent
 from streamlit_backend.agents.data_visualizer import create_data_visualizer_agent
+from streamlit_backend.agents.master_agent import create_master_agent
 from streamlit_backend.graph import create_graph
 import os
 
@@ -19,8 +20,9 @@ llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=gemini_api_key)
 genome_analyst = create_genome_analyst_agent(llm)
 proteomics_specialist = create_proteomics_specialist_agent(llm)
 data_visualizer = create_data_visualizer_agent(llm)
+master_agent = create_master_agent(llm)
 
-graph = create_graph(genome_analyst, proteomics_specialist, data_visualizer)
+graph = create_graph(genome_analyst, proteomics_specialist, data_visualizer, master_agent)
 
 class ChatRequest(BaseModel):
     message: str
