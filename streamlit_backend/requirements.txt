@@ -3,3 +3,4 @@ langchain
 langgraph
 fastapi
 uvicorn
+langchain-google-genai
