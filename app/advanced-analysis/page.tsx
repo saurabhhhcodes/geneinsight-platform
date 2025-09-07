@@ -8,7 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
-import RamachandranPlot from '@/app/components/RamachandranPlot';
+import dynamic from 'next/dynamic';
+
+const RamachandranPlot = dynamic(() => import('@/app/components/RamachandranPlot'), {
+  ssr: false,
+  loading: () => <p>Loading plot...</p>
+});
 
 const AdvancedAnalysisPage = () => {
   const [results, setResults] = useState<any>(null);
