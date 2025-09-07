@@ -212,6 +212,7 @@ export default function DashboardPage() {
               <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-blue-600">Dashboard</Link>
               <Link href="/analyze" className="text-sm font-medium text-gray-600 hover:text-blue-600">Analyze</Link>
               <Link href="/advanced-analysis" className="text-sm font-medium text-gray-600 hover:text-blue-600">Advanced Analysis</Link>
+              <Link href="/chat" className="text-sm font-medium text-gray-600 hover:text-blue-600">Chat</Link>
               <Link href="/history" className="text-sm font-medium text-gray-600 hover:text-blue-600">History</Link>
             </nav>
           </div>
