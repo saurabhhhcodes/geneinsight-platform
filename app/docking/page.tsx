@@ -721,6 +721,26 @@ export default function DockingPage() {
                 ) : null}
               </CardContent>
             </Card>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Protein Properties</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Atom Count: {preparationResult?.protein.validation?.atom_count || 'N/A'}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Ligand Properties</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Molecular Weight: {preparationResult?.ligand.mol_weight?.toFixed(2) || 'N/A'} Da</p>
+                  <p>Atom Count: {preparationResult?.ligand.num_atoms || 'N/A'}</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="dock" className="space-y-6">

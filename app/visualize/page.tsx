@@ -1347,11 +1347,13 @@ END`;
           {/* Additional Information Tabs */}
           <div className="mt-8">
             <Tabs defaultValue="sequence" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="sequence">Sequence</TabsTrigger>
                 <TabsTrigger value="features">Features</TabsTrigger>
                 <TabsTrigger value="interactions">Interactions</TabsTrigger>
                 <TabsTrigger value="literature">Literature</TabsTrigger>
+                <TabsTrigger value="swiss-prot">Swiss-Prot</TabsTrigger>
+                <TabsTrigger value="ramachandran">Ramachandran</TabsTrigger>
               </TabsList>
 
               <TabsContent value="sequence" className="mt-6">
@@ -1469,6 +1471,29 @@ END`;
                       </div>
                     </div>
                   </CardContent>
+              <TabsContent value="swiss-prot" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Swiss-Prot Analysis</CardTitle>
+                    <CardDescription>Protein information from the Swiss-Prot database</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Swiss-Prot content will be displayed here.</p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="ramachandran" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Ramachandran Plot</CardTitle>
+                    <CardDescription>Analysis of protein backbone dihedral angles</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Ramachandran plot will be displayed here.</p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
                 </Card>
               </TabsContent>
             </Tabs>
