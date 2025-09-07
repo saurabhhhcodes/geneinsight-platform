@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
+import RamachandranPlot from '@/app/components/RamachandranPlot';
 
 const AdvancedAnalysisPage = () => {
   const [results, setResults] = useState<any>(null);
@@ -122,14 +123,20 @@ const AdvancedAnalysisPage = () => {
                 </TabsList>
                 <TabsContent value="proteomics" className="mt-4">
                   <Card>
-                    <CardHeader><CardTitle className="text-lg">Mass Spectrometry Analysis</CardTitle></CardHeader>
+                    <CardHeader><CardTitle className="text-lg">Swiss-Prot Analysis</CardTitle></CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="ms-data">Mass Spec Data (mzML)</Label>
-                          <Input id="ms-data" type="file" />
+                          <Label htmlFor="protein-id">Protein ID (e.g., P05067)</Label>
+                          <Input id="protein-id" placeholder="Enter a UniProtKB accession number" />
                         </div>
-                        <Button onClick={() => handleAnalysis('peptide-analysis', {})}>Analyze Peptides</Button>
+                        <Button onClick={() => {
+                          const proteinId = (document.getElementById('protein-id') as HTMLInputElement).value;
+                          handleAnalysis('swiss-prot', { proteinId });
+                        }}>Fetch Protein Data</Button>
+                        {results?.tool === 'swiss-prot' && (
+                          <pre>{JSON.stringify(results.data, null, 2)}</pre>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -157,6 +164,9 @@ const AdvancedAnalysisPage = () => {
                           <Input id="pdb-input" type="file" />
                         </div>
                       <Button onClick={() => handleAnalysis('ramachandran-plot', {})}>Generate Ramachandran Plot</Button>
+                      {results?.tool === 'ramachandran-plot' && (
+                        <RamachandranPlot data={results.data} />
+                      )}
                     </CardContent>
                   </Card>
                 </TabsContent>
