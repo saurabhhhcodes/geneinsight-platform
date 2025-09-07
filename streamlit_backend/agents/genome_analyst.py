@@ -41,8 +41,12 @@ def create_genome_analyst_agent(llm: ChatGoogleGenerativeAI):
         """
     )
     
-    # In a real application, you would define and pass tools here.
-    tools = []
+    from streamlit_backend.tools.genome_assembly import de_novo_genome_assembly
+    from streamlit_backend.tools.orf_finder import find_orfs
+    from streamlit_backend.tools.variation_analysis import variation_analysis
+    from streamlit_backend.tools.gene_expression import gene_expression_analysis
+    
+    tools = [de_novo_genome_assembly, find_orfs, variation_analysis, gene_expression_analysis]
     
     agent = create_react_agent(llm, tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=True)

@@ -43,8 +43,9 @@ def create_proteomics_specialist_agent(llm: ChatGoogleGenerativeAI):
     
     from streamlit_backend.tools.ramachandran import generate_ramachandran_plot
     from streamlit_backend.tools.swiss_prot import fetch_swiss_prot_data
+    from streamlit_backend.tools.peptide_analysis import peptide_analysis
     
-    tools = [generate_ramachandran_plot, fetch_swiss_prot_data]
+    tools = [generate_ramachandran_plot, fetch_swiss_prot_data, peptide_analysis]
     
     agent = create_react_agent(llm, tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=True)
