@@ -7,8 +7,30 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
 
 const AdvancedAnalysisPage = () => {
+  const [results, setResults] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleAnalysis = async (tool: string, data: any) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/advanced-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tool, data }),
+      });
+      const result = await response.json();
+      setResults(result);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Advanced Genomics & Proteomics Analysis</h1>
@@ -38,7 +60,7 @@ const AdvancedAnalysisPage = () => {
                       <Label htmlFor="assembly-input">Sequencing Reads (FASTA/FASTQ)</Label>
                       <Textarea id="assembly-input" placeholder="Paste your sequencing reads here..." className="min-h-[150px] font-mono" />
                     </div>
-                    <Button>Start De novo Assembly</Button>
+                    <Button onClick={() => handleAnalysis('de-novo-assembly', {})}>Start De novo Assembly</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -52,7 +74,7 @@ const AdvancedAnalysisPage = () => {
                       <Label htmlFor="annotation-input">Assembled Genome (FASTA)</Label>
                       <Textarea id="annotation-input" placeholder="Paste your assembled genome sequence here..." className="min-h-[150px] font-mono" />
                     </div>
-                    <Button>Find Open Reading Frames (ORFs)</Button>
+                    <Button onClick={() => handleAnalysis('orf-finder', {})}>Find Open Reading Frames (ORFs)</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -77,7 +99,7 @@ const AdvancedAnalysisPage = () => {
                       <Label htmlFor="snp-input">Genomic Data (VCF/BAM)</Label>
                       <Input id="snp-input" type="file" />
                     </div>
-                    <Button>Analyze Variations</Button>
+                    <Button onClick={() => handleAnalysis('variation-analysis', {})}>Analyze Variations</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -107,7 +129,7 @@ const AdvancedAnalysisPage = () => {
                           <Label htmlFor="ms-data">Mass Spec Data (mzML)</Label>
                           <Input id="ms-data" type="file" />
                         </div>
-                        <Button>Analyze Peptides</Button>
+                        <Button onClick={() => handleAnalysis('peptide-analysis', {})}>Analyze Peptides</Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -121,7 +143,7 @@ const AdvancedAnalysisPage = () => {
                           <Label htmlFor="rnaseq-data">RNA-Seq Reads (FASTQ)</Label>
                           <Input id="rnaseq-data" type="file" />
                         </div>
-                        <Button>Analyze Gene Expression</Button>
+                        <Button onClick={() => handleAnalysis('gene-expression', {})}>Analyze Gene Expression</Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -134,7 +156,7 @@ const AdvancedAnalysisPage = () => {
                           <Label htmlFor="pdb-input">Protein Structure (PDB)</Label>
                           <Input id="pdb-input" type="file" />
                         </div>
-                      <Button>Generate Ramachandran Plot</Button>
+                      <Button onClick={() => handleAnalysis('ramachandran-plot', {})}>Generate Ramachandran Plot</Button>
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -143,6 +165,18 @@ const AdvancedAnalysisPage = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {isLoading && <p>Loading...</p>}
+      {results && (
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Analysis Results</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre>{JSON.stringify(results, null, 2)}</pre>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
