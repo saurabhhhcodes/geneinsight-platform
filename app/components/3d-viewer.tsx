@@ -51,7 +51,7 @@ export function MolecularViewer({
         script.parentNode.removeChild(script)
       }
     }
-  }, [])
+  }, [initializeViewer])
 
   const initializeViewer = () => {
     if (!viewerRef.current || !window.$3Dmol) return

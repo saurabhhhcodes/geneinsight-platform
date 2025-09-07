@@ -27,6 +27,9 @@ export default function LandingPage() {
             <Link href="#about" className="text-gray-600 hover:text-blue-600">
               About
             </Link>
+            <Link href="/genomics" className="text-gray-600 hover:text-blue-600">
+              Genomics
+            </Link>
             <Link href="/login" className="text-gray-600 hover:text-blue-600">
               Login
             </Link>

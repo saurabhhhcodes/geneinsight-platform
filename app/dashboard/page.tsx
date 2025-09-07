@@ -208,7 +208,12 @@ export default function DashboardPage() {
               <Dna className="h-8 w-8 text-blue-600" />
               <span className="text-2xl font-bold text-gray-900">GeneInsight</span>
             </div>
-            <Badge variant="secondary">Dashboard</Badge>
+            <nav className="hidden md:flex items-center space-x-4">
+              <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-blue-600">Dashboard</Link>
+              <Link href="/genomics" className="text-sm font-medium text-gray-600 hover:text-blue-600">Genomics</Link>
+              <Link href="/analyze" className="text-sm font-medium text-gray-600 hover:text-blue-600">Analyze</Link>
+              <Link href="/history" className="text-sm font-medium text-gray-600 hover:text-blue-600">History</Link>
+            </nav>
           </div>
           <div className="flex items-center space-x-4">
             {/* Notifications */}

@@ -180,16 +180,16 @@ export default function AIChatPage() {
               <CardContent>
                 <div className="space-y-2 text-xs">
                   <div className="p-2 bg-gray-50 rounded">
-                    "Analyze this protein sequence: MKWVTFISLLFLFSSAYS..."
+                    &quot;Analyze this protein sequence: MKWVTFISLLFLFSSAYS...&quot;
                   </div>
                   <div className="p-2 bg-gray-50 rounded">
-                    "What does a binding affinity of -9.2 kcal/mol mean?"
+                    &quot;What does a binding affinity of -9.2 kcal/mol mean?&quot;
                   </div>
                   <div className="p-2 bg-gray-50 rounded">
-                    "Explain the significance of kinase domains"
+                    &quot;Explain the significance of kinase domains&quot;
                   </div>
                   <div className="p-2 bg-gray-50 rounded">
-                    "How do I interpret docking results?"
+                    &quot;How do I interpret docking results?&quot;
                   </div>
                 </div>
               </CardContent>

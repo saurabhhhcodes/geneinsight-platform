@@ -170,7 +170,7 @@ export default function AdminPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Today's Analyses</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-600">Today&apos;s Analyses</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-600">{systemStats.todayAnalyses}</div>

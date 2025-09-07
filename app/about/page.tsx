@@ -57,7 +57,7 @@ export default function AboutPage() {
             About GeneInsight
           </h1>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8">
-            We're revolutionizing genetic analysis with cutting-edge AI technology, 
+            We&apos;re revolutionizing genetic analysis with cutting-edge AI technology, 
             making advanced genomic insights accessible to researchers and healthcare 
             professionals worldwide.
           </p>
